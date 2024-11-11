@@ -19,10 +19,6 @@ namespace CarRental.Models
         [Required(ErrorMessage = "Email is Required")]
 
         public string Email { get; set; }
-        [Required(ErrorMessage = "Phone is Required")]
-
-        public string Phone { get; set; }
-
 
         public int IdRole { get; set; }
 

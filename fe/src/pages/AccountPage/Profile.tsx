@@ -1,3 +1,7 @@
+import { useEffect, useState } from "react";
+import { Profile as MyProfile } from "../../types/types";
+import { baseAxios } from "../../api/axios";
+
 const Profile: React.FC = () => {
   // Mock data for the user profile
   const user = {
@@ -17,6 +21,40 @@ const Profile: React.FC = () => {
     },
     licenseNumber: "",
   };
+  const [myProfile, setMyProfile] = useState<MyProfile | null>(null);
+  const [totalRented, setTotalRented] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await baseAxios.get("/profile");
+        setMyProfile(response.data);
+        
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchTotalRented = async () => {
+      try {
+        const response = await baseAxios.get("/booking/count");
+        setTotalRented(response.data.count);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchProfile();
+    fetchTotalRented();
+  }, []);
+
+  const formatDate = (dateString : Date = new Date()): string => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  } 
   return (
     <div>
       {/* Account Information */}
@@ -81,21 +119,17 @@ const Profile: React.FC = () => {
                 </defs>
               </svg>
             </div>
-            <p className="text-primary font-bold text-3xl">0</p>
+            <p className="text-primary font-bold text-3xl">{totalRented}</p>
             <span>chuyến</span>
           </div>
         </div>
         <div className="grid grid-cols-6">
           {/* Profile Picture and Name */}
           <div className="flex flex-col col-span-2 items-center">
-            <div className="w-40 h-40 bg-orange-500 text-white text-4xl flex items-center justify-center rounded-full">
-              {user.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </div>
-            <h3 className="text-2xl font-semibold mt-4 flex-1">{user.name}</h3>
-            <p className="text-gray-500 flex-1">Tham gia: 04/11/2024</p>
+            <img src={myProfile?.img} alt="avatar" className="w-40 h-40  text-4xl flex items-center justify-center rounded-full"/>
+              
+            <h3 className="text-2xl font-semibold mt-4 flex-1">{myProfile?.name}</h3>
+            <p className="text-gray-500 flex-1">Tham gia: {formatDate(myProfile?.createdDate)}</p>
             <div className="flex items-center mt-2 p-2 border rounded-lg">
               <svg
                 width="24"
@@ -120,7 +154,7 @@ const Profile: React.FC = () => {
                   stroke="#FFC634"
                 ></path>
               </svg>
-              <span className="ml-1 font-bold">{1} điểm</span>
+              <span className="ml-1 font-bold">{totalRented} điểm</span>
             </div>
           </div>
           {/* Profile Information */}
@@ -128,17 +162,17 @@ const Profile: React.FC = () => {
             <div className="bg-[#f6f6f6] py-4 px-6 rounded-lg mb-4">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-gray-500 text-sm">Ngày sinh</span>
-                <span className="font-bold text-lg">----/----/--------</span>
+                <span className="font-bold text-lg">{myProfile?.ngaysinh ? formatDate(myProfile?.ngaysinh):'----/----/--------'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-500 text-sm">Giới tính</span>
-                <span className="font-bold text-lg">Nam</span>
+                <span className="font-bold text-lg">{myProfile?.gioiTinh === null ? '--------':myProfile?.gioiTinh === 1 ? 'Nam': myProfile?.gioiTinh === 2 ? "Nữ" : "Khác"}</span>
               </div>
             </div>
             <div className="flex justify-between items-center mb-4">
               <div className="flex justify-center items-center">
                 <span className="text-gray-500 mr-2">Số điện thoại</span>
-                {user.verified.email && (
+                {myProfile?.phone && (
                   <div className="flex justify-center items-center bg-green-200 px-2 py-0.5 rounded-full text-sm">
                     <svg
                       width="12"
@@ -157,7 +191,7 @@ const Profile: React.FC = () => {
                 )}
               </div>
               <div className="flex items-center">
-                <span className="font-bold">Thêm số điện thoại</span>
+                <span className="font-bold">{myProfile?.phone ? myProfile?.phone : 'Thêm số điện thoại'}</span>
 
                 <button>
                   <svg
@@ -187,7 +221,7 @@ const Profile: React.FC = () => {
             <div className="flex justify-between items-center mb-4">
               <div className="flex justify-center items-center">
                 <span className="text-gray-500 mr-2">Email</span>
-                {user.verified.email && (
+                {myProfile?.email && (
                   <div className="flex justify-center items-center bg-green-200 px-2 py-0.5 rounded-full text-sm">
                     <svg
                       width="12"
@@ -206,7 +240,7 @@ const Profile: React.FC = () => {
                 )}
               </div>
               <div className="flex items-center">
-                <span className="font-bold">{user.email}</span>
+                <span className="font-bold">{myProfile?.email}</span>
 
                 <button>
                   <svg

@@ -35,10 +35,20 @@ namespace CarRental.Services
             return true;
         }
 
-        public async Task<List<Feedback>> GetFeedbacksAsync(int id)
+        public async Task<List<FeedbackDto>> GetFeedbacksAsync(int id)
         {
             return await _context.Feedbacks
+                .Include(x => x.InfoUserCus)
+                .Include(x => x.InfoUserCus)
                 .Where(x => x.IdCar == id)
+                .Select(x => new FeedbackDto
+                {
+                    CustomerName = x.InfoUserCus.Name,
+                    Date = x.Date,
+                    Noidung = x.Noidung,
+                    Danhgia = x.Danhgia,
+                    CustomerImg = x.InfoUserCus.Img
+                })
                 .ToListAsync();
         }
     }

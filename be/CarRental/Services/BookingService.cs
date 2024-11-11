@@ -34,12 +34,20 @@ namespace CarRental.Services
 
             // Kiểm tra nếu booking đã tồn tại
             var donDat = await _appDbContext.DonDatXes
-                .FirstOrDefaultAsync(x => x.IdSp == dto.CarId && x.IdCus == int.Parse(userIdClaim.Value) && x.IdOwner == dto.OwnerId);
+                .FirstOrDefaultAsync(x => 
+                x.IdSp == dto.CarId && 
+                x.IdCus == int.Parse(userIdClaim.Value) && 
+                x.IdOwner == dto.OwnerId && 
+                (x.State == 0 || x.State == 1)
+                );
 
             if (donDat != null)
             {
                 throw new InvalidOperationException("Booking already exists.");
             }
+
+            SanPham sp = await _appDbContext.SanPhams.FirstOrDefaultAsync(x => x.Id == dto.CarId);
+            sp.State = 0;
 
             donDat = new DonDatXe
             {
@@ -60,7 +68,7 @@ namespace CarRental.Services
         public async Task<int> GetBookingCountAsync(string token)
         {
             int IdUser = _jwtUtil.GetIdFromToken(token);
-            return await _appDbContext.DonDatXes.CountAsync(x => x.IdCus == IdUser && x.State == 1);
+            return await _appDbContext.DonDatXes.CountAsync(x => x.IdCus == IdUser && x.State == 3);
         }
     }
 }

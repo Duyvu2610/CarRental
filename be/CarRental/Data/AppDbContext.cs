@@ -123,7 +123,6 @@ namespace CarRental.Data
 
                 entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.Phone).IsRequired().HasMaxLength(10);
 
                 entity.HasOne(r => r.role)
                 .WithMany(u => u.Users)
@@ -164,7 +163,6 @@ namespace CarRental.Data
             modelBuilder.Entity<HoaDon>(entity =>
             {
                 entity.Property(e => e.Paymentdate)
-                .HasColumnType("date")
                 .IsRequired();
 
                 entity.Property(e => e.Total).IsRequired();
@@ -178,6 +176,11 @@ namespace CarRental.Data
                .WithMany(f => f.HoaDoncs)
                .HasForeignKey(f => f.IdOwner)
                .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(u => u.DonDatXe)
+                .WithOne(f => f.HoaDon)
+                .HasForeignKey<HoaDon>(f => f.IdBooking)
+                .OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<CTHD>(entity =>

@@ -45,8 +45,14 @@ namespace CarRental.Controllers
                 NumOfSeat = car.Soghe,
                 Fuel = car.LoaiNl,
                 Description = car.Mota,
-                ListFeature = car.ListTinhNang.Select(t => t.Idtinhnang).ToList(),
-                Price = car.SanPham.Gia
+                ListFeature = car.ListTinhNang.Select(t => new TinhNangDto()
+                {
+                    Name = t.TinhNang.Name,
+                    Icon = t.TinhNang.Icon
+                }).ToList(),
+                Price = car.SanPham.Gia,
+                Id = car.Id,
+                IdOwner = car.IdUser
             };
             return Ok(carDto);
         }

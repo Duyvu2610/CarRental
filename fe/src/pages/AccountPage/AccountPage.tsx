@@ -1,5 +1,9 @@
 import React from "react";
 import Profile from "./Profile";
+import BookingHistory from "./BookingHistory";
+import MyCar from "./MyCar";
+import ChangePassword from "./ChangePassword";
+import { baseAxios } from "../../api/axios";
 
 const AccountPage: React.FC = () => {
 
@@ -11,15 +15,29 @@ const AccountPage: React.FC = () => {
   }
 
   const sidebarItems = [
-    { icon: "👤", label: "Tài khoản của tôi"},
-    { icon: "❤️", label: "Xe yêu thích" },
+    { icon: "👤", label: "Thông tin cá nhân"},
     { icon: "🚗", label: "Xe của tôi" },
-    { icon: "🧳", label: "Chuyến của tôi" },
-    { icon: "📄", label: "Đơn hàng Thuê xe dài hạn" },
-    { icon: "🎁", label: "Quà tặng" },
-    { icon: "📍", label: "Địa chỉ của tôi" },
-    { icon: "🔒", label: "Đổi mật khẩu" },
-    { icon: "🚪", label: "Đăng xuất", specialClass: "text-red-600" },
+    { icon: "🧳", label: "Đổi mật khẩu" },
+    { icon: "📄", label: "Lịch sử thuê xe" },
+    { icon: "🎁", label: "Xóa tài khoản" , onclick : () => {
+      if (window.confirm("Bạn có chắc chắn muốn xóa tài khoản không?")) {
+        baseAxios.delete("/profile")
+          .then(() => {
+            alert("Xóa tài khoản thành công");
+            localStorage.removeItem("token");
+            window.location.href = "/";
+          })
+          .catch((error) => {
+            alert("Xóa tài khoản thất bại");
+          });
+      }
+    }},
+    { icon: "🚪", label: "Đăng xuất", specialClass: "text-red-600", onclick : () => {
+      if (window.confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+        localStorage.removeItem("token");
+        window.location.href = "/";
+      }
+    }},
   ];
 
   return (
@@ -39,7 +57,13 @@ const AccountPage: React.FC = () => {
                     item.specialClass || ""
                   } ${activeTab === index ? activeTabClass : ""}`}
                 >
-                  <button onClick={() => handleChangeTab(index)} className=" p-4 w-full text-left">{item.icon}<span className="ml-2">{item.label}</span></button> 
+                  <button onClick={() => {
+                    if (item.onclick) {
+                      item.onclick();
+                    } else {
+                      handleChangeTab(index);
+                    }
+                  }} className=" p-4 w-full text-left">{item.icon}<span className="ml-2">{item.label}</span></button>  
                 </li>
               ))}
             </ul>
@@ -48,6 +72,9 @@ const AccountPage: React.FC = () => {
           {/* Main Content */}
           <div className="w-full md:w-3/4 p-4">
             {activeTab === 0 && <Profile />}
+            {activeTab === 1 && <MyCar />}
+            {activeTab === 2 && <ChangePassword />}
+            {activeTab === 3 && <BookingHistory />}
           </div>
         </div>
       </div>

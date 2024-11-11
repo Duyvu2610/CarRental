@@ -1,6 +1,7 @@
 ﻿using CarRental.Dto;
 using CarRental.Models;
 using CarRental.Services;
+using CarRental.Util;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental.Controllers
@@ -10,16 +11,21 @@ namespace CarRental.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly ProfileService _profileService;
+        private readonly UserService _userService;
+        private readonly JwtUtil _jwtUtil;
 
-        public ProfileController(ProfileService profileService)
+        public ProfileController(ProfileService profileService, UserService userService, JwtUtil jwtUtil)
         {
             _profileService = profileService;
+            _userService = userService;
+            _jwtUtil = jwtUtil;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<InfoUser>> GetProfile(int id)
+        [HttpGet]
+        public async Task<ActionResult<InfoDto>> GetProfile()
         {
-            var profile = await _profileService.InfoUser(id);
+            string token = Request.Headers["Authorization"];
+            var profile = await _profileService.InfoUser(token.Replace("Bearer ", ""));
             if (profile == null)
             {
                 return NotFound();
@@ -40,10 +46,10 @@ namespace CarRental.Controllers
         }
 
         [HttpGet("history/booking")]
-        public async Task<ActionResult> GetBookingHistory()
+        public async Task<ActionResult> GetBookingHistory([FromQuery] int status)
         {
             string token = Request.Headers["Authorization"];
-            var result = await _profileService.GetBookingHistory(token.Replace("Bearer ", ""));
+            var result = await _profileService.GetBookingHistory(token.Replace("Bearer ", ""), status);
             return Ok(result);
         }
 
@@ -83,13 +89,25 @@ namespace CarRental.Controllers
             return Ok();
         }
 
-        [HttpGet("booking/list")]
-        public async Task<ActionResult> GetBookingList([FromQuery] int state)
+        [HttpGet("my-car")]
+        public async Task<ActionResult> GetBookingList()
         {
             string token = Request.Headers["Authorization"];
-            var result = await _profileService.GetBookingList(token.Replace("Bearer ", ""), state);
+            var result = await _profileService.GetBookingList(token.Replace("Bearer ", ""));
             return Ok(result);
         }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteUser()
+        {
+            string token = Request.Headers["Authorization"];
+            int id = _jwtUtil.GetIdFromToken(token.Replace("Bearer ", ""));
+            bool isSucess = await _userService.DeleteUser(id);
+            if (!isSucess)
+            {
+                return NotFound();
+            }
+            return Ok();
+        }
     }
-        
 }

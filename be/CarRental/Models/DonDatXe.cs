@@ -21,7 +21,12 @@ namespace CarRental.Models
         public virtual InfoUser? infoUserOwner { get; set; }
 
         [JsonIgnore]
-        public virtual InfoUser? InfoUserCus { get; set; }   
+        public virtual InfoUser? InfoUserCus { get; set; }
+
+        [JsonIgnore]
+        public virtual HoaDon? HoaDon { get; set; }
+
+
 
 
     }

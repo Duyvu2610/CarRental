@@ -18,7 +18,8 @@ namespace CarRental.Models
 
         public int Truyendong { get; set; }
 
-        public string LoaiNl { get; set; }
+        //1 : Xang, 2:Dau, 3:Dien
+        public int LoaiNl { get; set; }
 
         public string? Mota { get; set; }
 

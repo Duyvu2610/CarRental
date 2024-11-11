@@ -50,7 +50,8 @@ namespace CarRental.Controllers
         {
             try
             {
-                await _authService.ChangePasswordAsync(request.UserName, request.OldPassword, request.NewPassword);
+                var authHeader = Request.Headers["Authorization"].ToString();
+                await _authService.ChangePasswordAsync(authHeader.Replace("Bearer ", ""), request.OldPassword, request.NewPassword);
                 return Ok();
             }
             catch (Exception ex)

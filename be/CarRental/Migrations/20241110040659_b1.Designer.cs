@@ -4,6 +4,7 @@ using CarRental.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRental.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241110040659_b1")]
+    partial class b1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,9 +167,6 @@ namespace CarRental.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("IdBooking")
-                        .HasColumnType("int");
-
                     b.Property<int>("IdCus")
                         .HasColumnType("int");
 
@@ -174,15 +174,12 @@ namespace CarRental.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Paymentdate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<double>("Total")
                         .HasColumnType("float");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("IdBooking")
-                        .IsUnique();
 
                     b.HasIndex("IdOwner");
 
@@ -196,9 +193,6 @@ namespace CarRental.Migrations
 
                     b.Property<string>("CCCD")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("GPLX")
                         .HasColumnType("nvarchar(max)");
@@ -217,9 +211,6 @@ namespace CarRental.Migrations
 
                     b.Property<DateTime?>("Ngaysinh")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("IdUser");
 
@@ -248,9 +239,10 @@ namespace CarRental.Migrations
                     b.Property<int>("IdUser")
                         .HasColumnType("int");
 
-                    b.Property<int>("LoaiNl")
+                    b.Property<string>("LoaiNl")
+                        .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Mota")
                         .HasMaxLength(500)
@@ -418,6 +410,11 @@ namespace CarRental.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -517,19 +514,11 @@ namespace CarRental.Migrations
 
             modelBuilder.Entity("CarRental.Models.HoaDon", b =>
                 {
-                    b.HasOne("CarRental.Models.DonDatXe", "DonDatXe")
-                        .WithOne("HoaDon")
-                        .HasForeignKey("CarRental.Models.HoaDon", "IdBooking")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("CarRental.Models.InfoUser", "infoUser")
                         .WithMany("HoaDoncs")
                         .HasForeignKey("IdOwner")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("DonDatXe");
 
                     b.Navigation("infoUser");
                 });
@@ -630,11 +619,6 @@ namespace CarRental.Migrations
                     b.Navigation("InfoXe");
 
                     b.Navigation("TinhNang");
-                });
-
-            modelBuilder.Entity("CarRental.Models.DonDatXe", b =>
-                {
-                    b.Navigation("HoaDon");
                 });
 
             modelBuilder.Entity("CarRental.Models.Hang", b =>

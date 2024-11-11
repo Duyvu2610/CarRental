@@ -31,7 +31,6 @@ namespace CarRental.Services
                     {
                         Email = email,
                         UserName = email,
-                        Phone = "123",
                         IdRole = 1,
                         Password = BCrypt.Net.BCrypt.HashPassword(password)
                     };
@@ -41,7 +40,8 @@ namespace CarRental.Services
 
                     InfoUser infoUser = new InfoUser
                     {
-                        IdUser = user.Id
+                        IdUser = user.Id,
+                        CreatedDate = System.DateTime.Now,
                     };
 
                     await _context.InfoUsers.AddAsync(infoUser);
@@ -70,9 +70,10 @@ namespace CarRental.Services
             return _jwtUtil.GenerateToken(user.Id);
         }
 
-        public async Task ChangePasswordAsync(string userName, string oldPass, string newPass)
+        public async Task ChangePasswordAsync(string token, string oldPass, string newPass)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+            var id = _jwtUtil.GetIdFromToken(token);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null || !BCrypt.Net.BCrypt.Verify(oldPass, user.Password))
             {
                 throw new Exception("Invalid username or password.");

@@ -16,7 +16,6 @@ import Product from "../pages/Product/Product";
 import ProductDetail from "../pages/ProductDetail/ProductDetail";
 import ResetPassword from "../pages/ResetPassword/ResetPassword";
 import SignUpPage from "../pages/SignUpPage";
-import ThankYou from "../pages/ThankYou/ThankYou";
 
 const publicRoutes = [
   { path: config.routes.home, component: Home, layout: DefaultLayout },
@@ -34,7 +33,6 @@ const publicRoutes = [
   { path: config.routes.product, component: Product, layout: DefaultLayout },
   { path: config.routes.contact, component: Contact, layout: DefaultLayout },
   { path: config.routes.cart, component: CartPage, layout: DefaultLayout },
-  { path: config.routes.thank, component: ThankYou, layout: DefaultLayout },
   {
     path: config.routes["forgot-pass"],
     component: ForgotPassword,

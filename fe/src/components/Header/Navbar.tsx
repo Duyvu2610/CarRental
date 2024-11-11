@@ -1,23 +1,19 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { AiOutlineLogin } from "react-icons/ai";
 import { FaBars } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
-import { useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
 import Logo from "../../assets/images/alphabet.png";
 import routes from "../../config/routes";
-import { RootState } from "../../redux/store";
-import { GetUserInfoDto } from "../../types/types";
+import FormSignUp from "../FormSignUp";
+import FormLogin from "../FormLogin";
 
 const Navbar: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const isLogin = localStorage.getItem("user");
-
-  const user: GetUserInfoDto | null = useSelector(
-    (state: RootState) => state.auth.currentUser
+  const [isShowSignUp, setIsShowSignUp] = useState(false);
+  const [isLogin, setIsLogin] = useState<boolean>(
+    localStorage.getItem("token") ? true : false
   );
-  console.log(user);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -55,13 +51,13 @@ const Navbar: FC = () => {
 
           <ul className="flex justify-between items-center flex-1 col-span-4">
             <NavLink
-                    to={routes.about}
-                    key={routes.about}
-                    className={"font-semibold"}
-                  >
-                    Về chúng tôi
-                  </NavLink>
-            {true ? (
+              to={routes.about}
+              key={routes.about}
+              className={"font-semibold"}
+            >
+              Về chúng tôi
+            </NavLink>
+            {isLogin ? (
               <>
                 <NavLink
                   to={routes.carregistermodel}
@@ -73,30 +69,54 @@ const Navbar: FC = () => {
 
                 <div className="border-r h-6"></div>
 
-                <NavLink
-                  to={routes.account}
-                  key={routes.account}
-                >
-                  Xin chào! vuj
+                <NavLink to={routes.account} key={routes.account}>
+                  Xin chào
                 </NavLink>
               </>
             ) : (
               <>
                 <div className="border-r h-6"></div>
 
-                <NavLink
-                  to={routes.product}
-                  key={routes.product}
+                <li
+                onClick={() =>
+                  (
+                    document.getElementById("my_modal_3") as HTMLDialogElement
+                  ).showModal()
+                }
                   className={"font-semibold"}
                 >
                   Đăng ký
-                </NavLink>
-                <Link
-                  to={"/login"}
-                  className="hidden lg:block border py-2 px-3 rounded-lg border-black font-semibold"
+                </li>
+                <li
+                  className="hidden lg:block border py-2 px-3 rounded-lg border-black font-semibold cursor-pointer"
+                  onClick={() =>
+                    (
+                      document.getElementById("my_modal_3") as HTMLDialogElement
+                    ).showModal()
+                  }
                 >
                   Đăng nhập
-                </Link>
+                  <dialog id="my_modal_3" className="modal">
+                    <div className="modal-box">
+                      <form method="dialog">
+                        {/* if there is a button in form, it will close the modal */}
+                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                          ✕
+                        </button>
+                      </form>
+                      {isShowSignUp ? (
+                        <FormSignUp
+                          onClickLogin={() => setIsShowSignUp(false)}
+                        />
+                      ) : (
+                        <FormLogin
+                          onClickSignUp={() => setIsShowSignUp(true)}
+                          onLoginSuccess={() => setIsLogin(true)}
+                        />
+                      )}
+                    </div>
+                  </dialog>
+                </li>
               </>
             )}
           </ul>

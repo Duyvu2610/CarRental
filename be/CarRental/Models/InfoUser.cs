@@ -27,6 +27,10 @@ namespace CarRental.Models
         public DateTime? Ngaysinh { get; set; }
         public int? GioiTinh { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+
+        public string? Phone { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<HoaDon>? HoaDoncs { get; set;}
 

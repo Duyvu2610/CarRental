@@ -10,8 +10,10 @@ import Swal from "sweetalert2";
 export const baseAxios = axios.create({
   baseURL: "https://localhost:7242/api",
   headers: {
-    "Content-Type": "application/json"
-  }
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+  },
+  
 });
 
 const dispatch = getDispatch();
@@ -26,12 +28,10 @@ export const currentUser: GetUserInfoDto = localStorage.getItem("user")
 
 export const loginUser = async (loginProp: Login) => {
   try {
-    console.log(loginProp);
-    const token: string = (await baseAxios.post("/auth/login", loginProp)).data;
-    localStorage.setItem("user", token);
-    // dispatch(loginSuccess(res));
+    const data: any = (await baseAxios.post("/auth/login", loginProp)).data;
+    localStorage.setItem("token", data.token);
+    baseAxios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
     navigate("/");
-    return token;
   } catch (error) {
     return Promise.reject(error);
   }

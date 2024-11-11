@@ -27,6 +27,8 @@ namespace CarRental.Models
        
         public int GioiHankmgiaoxe { get; set; }
         public double Gia { get; set; }
+
+        // 0: Dang cho xac nhan, 1: Dang duoc thue, 2: Con trong
         public int State { get; set; }
 
         [JsonIgnore]

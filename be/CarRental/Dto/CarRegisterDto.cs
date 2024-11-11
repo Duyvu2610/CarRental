@@ -12,7 +12,7 @@
 
         public int DriveShaftKbn { get; set; }
 
-        public string Fuel { get; set; }
+        public int Fuel { get; set; }
 
         public string Description { get; set; }
 

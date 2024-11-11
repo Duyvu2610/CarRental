@@ -56,5 +56,14 @@ namespace CarRental.Controllers
             }
             return NoContent();
         }
+
+        [HttpGet("renting-cars/list")]
+        public async Task<IActionResult> GetRentingCars([FromQuery] int state, [FromQuery] int carId)
+        {
+            var cars = await _userService.GetRentingCars(state, carId);
+            return Ok(cars);
+        }
+
+
     }
 }

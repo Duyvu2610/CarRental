@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#5fcf86",
+        primary: "#22c55e",
         footer: "#45595b",
         bg: "#f6f6f6",
       },
@@ -40,5 +40,30 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  daisyui: {
+    themes: [
+      {
+        mytheme: {
+          primary: "#22c55e",
+
+          secondary: "#ff00ff",
+
+          accent: "#00ffff",
+
+          neutral: "#ff00ff",
+
+          "base-100": "#ffffff",
+
+          info: "#0000ff",
+
+          success: "#00ff00",
+
+          warning: "#00ff00",
+
+          error: "#ff0000",
+        },
+      },
+    ],
+  },
+  plugins: [require("daisyui")],
 };

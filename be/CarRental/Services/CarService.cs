@@ -30,6 +30,7 @@ namespace CarRental.Services
                 .Include(SanPham => SanPham.SanPham)
                 .Include(ListTinhNang => ListTinhNang.ListTinhNang).
                 Include(XeTinhNang => XeTinhNang.ListTinhNang)
+                .Where(SanPham => SanPham.SanPham.State != 1)
                 .Select(x => new CarDto
                 {
                     Id = x.Id,
@@ -40,7 +41,11 @@ namespace CarRental.Services
                     NumOfSeat = x.Soghe,
                     Fuel = x.LoaiNl,
                     Description = x.Mota,
-                    ListFeature = x.ListTinhNang.Select(t => t.Idtinhnang).ToList(),
+                    ListFeature = x.ListTinhNang.Select(t => new TinhNangDto()
+                    {
+                        Name = t.TinhNang.Name,
+                        Icon = t.TinhNang.Icon
+                    }).ToList(),
                     Price = x.SanPham.Gia
                 })
                 .ToListAsync();
@@ -65,7 +70,7 @@ namespace CarRental.Services
                         Soghe = carRegisterDto.NumOfSeat,
                         Truyendong = carRegisterDto.DriveShaftKbn,
                         LoaiNl = carRegisterDto.Fuel,
-                        Mota = carRegisterDto.Description
+                        Mota = carRegisterDto.Description,
                     };
 
                     _appDbContext.InfoXes.Add(car);
@@ -84,7 +89,7 @@ namespace CarRental.Services
                         Img = carRegisterDto.ImgUrl,
                         GioiHankmgiaoxe = carRegisterDto.LimitDeliveryKm,
                         Gia = carRegisterDto.Price,
-                        State = 0
+                        State = 2
                     };
 
                     _appDbContext.SanPhams.Add(carDetail);
@@ -124,7 +129,7 @@ namespace CarRental.Services
                 .AsNoTracking()
                 .Include(SanPham => SanPham.SanPham)
                 .Include(Loaixe => Loaixe.Loaixe)
-                .Include(ListTinhNang => ListTinhNang.ListTinhNang)
+                .Include(ListTinhNang => ListTinhNang.ListTinhNang).ThenInclude(TinhNang => TinhNang.TinhNang)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 

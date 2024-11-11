@@ -153,6 +153,7 @@ export interface GetUserInfoDto {
 
 export interface CarInfo {
   id: number;
+  idOwner: number;
   name: string;
   imgUrl: string;
   address: string;
@@ -164,15 +165,103 @@ export interface CarInfo {
   price: number;
 }
 
+export interface Feature {
+  name: string;
+  icon: string;
+}
+
 export interface CarDetails {
   name: string;
   id: number;
+  idOwner: number;
   imgUrl: string;
   address: string;
   driveShaftKbn: number;
   numOfSeat: number;
   fuel: string;
   description: string;
-  listFeature: any[];
+  listFeature: Feature[];
+  price: number;
+}
+
+export interface Feedback {
+  customerName: string;
+  customerImg: string;
+  date: Date;
+  noidung: string;
+  danhgia: number;
+}
+
+export interface BookingRequestDto {
+  carId: number;
+  ownerId: number;
+  location: string;
+  checkIn: Date;
+  checkOut: Date;
+}
+
+export interface ProfileRequestDto {
+  name: string;
+  identityCard: number;
+  drivingLicense: string;
+  dob: Date;
+  // 1: Nam, 2: Nu, 3: Khac
+  gender: number;
+}
+
+export interface Profile {
+  idUser: number;
+  name: string;
+  cccd: string;
+  gplx: string;
+  imgGplx: string;
+  img: string;
+  ngaysinh: Date;
+  // 1: Nam, 2: Nu, 3: Khac
+  gioiTinh: number;
+  createdDate: Date;
+  phone: string
+  email: string;
+
+}
+
+export interface Booking {
+  id: number;
+  idCar: number;
+  idCustomer: number;
+  idOwner: number;
+  location: string;
+  bookingDate: Date;
+  checkin: Date;
+  checkout: Date;
+  state: number;
+  imageCar: string;
+  nameCar: string;
+  customerName: string;
+}
+
+export interface MyCarDto {
+  id: number;
+  name: string;
+  brand: string;
+  image: string;
+  description: string;
+  state: number;
+}
+
+export interface CarRequestDto {
+  brandKbn: number;
+  carTypeKbn: number;
+  licensePlate: string;
+  numOfSeat: number;
+  driveShaftKbn: number;
+  fuel: string;
+  description: string;
+  note: string;
+  address: string;
+  limitKm: number;
+  priceLimitKm: number;
+  imgUrl: string;
+  limitDeliveryKm: number;
   price: number;
 }
