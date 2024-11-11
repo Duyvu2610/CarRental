@@ -39,6 +39,29 @@ namespace CarRental.Services
                 .Where(x => x.IdUser == id)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<InfoDto> InfoUser(int id)
+        {
+            return await _appDbContext.InfoUsers
+                .Include(x => x.User)
+                .Select(x => new InfoDto
+                {
+                    IdUser = x.IdUser,
+                    Name = x.Name,
+                    CCCD = x.CCCD,
+                    GPLX = x.GPLX,
+                    ImgGplx = x.ImgGplx,
+                    Img = x.Img,
+                    Ngaysinh = x.Ngaysinh,
+                    GioiTinh = x.GioiTinh,
+                    CreatedDate = x.CreatedDate,
+                    Phone = x.Phone,
+                    Email = x.User.Email
+                })
+                .Where(x => x.IdUser == id)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<bool> UpdateProfile(string token, RequestProfileDto Dto)
         {
             int UserId = _jwtUtil.GetIdFromToken(token);
@@ -55,6 +78,7 @@ namespace CarRental.Services
             user.GPLX = Dto.DrivingLicense;
             user.Ngaysinh = Dto.Dob;
             user.GioiTinh = Dto.Gender;
+            user.Phone = Dto.Phone;
 
             await _appDbContext.SaveChangesAsync();
             return true;
@@ -80,7 +104,8 @@ namespace CarRental.Services
                     Checkout = x.checkout,
                     State = x.State,
                     ImageCar = x.SanPham.Img,
-                    NameCar = x.SanPham.InfoXe.Hang.Name
+                    NameCar = x.SanPham.InfoXe.Hang.Name,
+                    Price = x.SanPham.Gia
                 })
                 .OrderByDescending(x => x.BookingDate)
                 .ToListAsync();

@@ -23,5 +23,12 @@ namespace CarRental.Controllers
             var brands = await _brandService.SearchBrand();
             return Ok(brands);
         }
+
+        [HttpGet("loai/{id}")]
+        public async Task<ActionResult<IEnumerable<Loaixe>>> GetAllCarTypes(int id)
+        {
+            var carTypes = await _brandService.SearchCarType(id);
+            return Ok(carTypes);
+        }
     }
 }

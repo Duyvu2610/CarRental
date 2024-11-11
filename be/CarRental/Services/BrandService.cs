@@ -17,5 +17,10 @@ namespace CarRental.Services
         {
             return await _appDbContext.Hangs.ToListAsync();
         }
+
+        public async Task<List<Loaixe>> SearchCarType(int id)
+        {
+            return await _appDbContext.Loaixes.Where(x => x.HangId == id).ToListAsync();
+        }
     }
 }

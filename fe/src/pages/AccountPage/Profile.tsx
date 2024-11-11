@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Profile as MyProfile } from "../../types/types";
 import { baseAxios } from "../../api/axios";
+import FormUpdateUser from "./UpdateProfile";
 
 const Profile: React.FC = () => {
   // Mock data for the user profile
@@ -62,7 +63,7 @@ const Profile: React.FC = () => {
         <div className="flex justify-between pb-6 items-center">
           <div className="flex">
             <span className="font-bold text-2xl mr-2">Thông tin tài khoản</span>
-            <button className="border p-2 rounded-full">
+            <button className="border p-2 rounded-full" onClick={() => (document.getElementById('my_modal_3') as HTMLDialogElement).showModal()}>
               <svg
                 width="16"
                 height="16"
@@ -84,6 +85,15 @@ const Profile: React.FC = () => {
                 ></path>
               </svg>
             </button>
+            <dialog id="my_modal_3" className="modal">
+              <div className="modal-box">
+                <form method="dialog">
+                  {/* if there is a button in form, it will close the modal */}
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                </form>
+                {myProfile && <FormUpdateUser onUpdateSuccess={() => window.location.reload()} data={myProfile} />}
+              </div>
+            </dialog>
           </div>
           <div className="flex p-4 border rounded-lg justify-center items-center gap-2">
             <div className="wrap-svg">

@@ -11,5 +11,7 @@
         public DateTime? Dob { get; set; }
 
         public int Gender { get; set; }
+
+        public string? Phone { get; set; }
     }
 }

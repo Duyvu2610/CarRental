@@ -20,5 +20,7 @@ namespace CarRental.Dto
         public string? NameCar { get; set; }
         public string CustomerName { get; set; }
 
+        public double Price { get; set; }
+
     }
 }

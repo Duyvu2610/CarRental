@@ -66,6 +66,29 @@ namespace CarRental.Controllers
             }
         }
 
+        [HttpPost("payment/{id}")]
+        public async Task<IActionResult> PaymentBooking(int id)
+        {
+            try
+            {
+                var authHeader = Request.Headers["Authorization"].ToString();
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return Unauthorized(new { Message = "Token is missing or invalid." });
+                }
+                await _bookingService.PaymentBookingAsync(authHeader.Replace("Bearer ", ""), id);
+                return Ok();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred.", Details = ex.Message });
+            }
+        }
+
         //[HttpDelete]
         //public async Task<IActionResult> CancelBooking([FromBody] CancelBookingRequestDto dto)
         //{

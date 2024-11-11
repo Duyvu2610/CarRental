@@ -1,4 +1,5 @@
 ﻿using CarRental.Data;
+using CarRental.Dto;
 using CarRental.Models;
 using CarRental.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -13,28 +14,45 @@ namespace CarRental.Controllers
     {
         private readonly AppDbContext _context;
         private readonly UserService _userService;
+        private readonly ProfileService _profileService;
 
-        public UserController(AppDbContext context, UserService userService)
+        public UserController(AppDbContext context, UserService userService, ProfileService profileService)
         {
             _context = context;
             _userService = userService;
+            _profileService = profileService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<User>>> GetProducts()
+        public async Task<ActionResult<List<InfoDto>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.InfoUsers
+                .Include(x => x.User)
+                .Select(x => new InfoDto
+                {
+                    IdUser = x.IdUser,
+                    Name = x.Name,
+                    CCCD = x.CCCD,
+                    GPLX = x.GPLX,
+                    ImgGplx = x.ImgGplx,
+                    Img = x.Img,
+                    Ngaysinh = x.Ngaysinh,
+                    GioiTinh = x.GioiTinh,
+                    CreatedDate = x.CreatedDate,
+                    Phone = x.Phone,
+                    Email = x.User.Email
+                }).ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetProduct(int id)
+        public async Task<ActionResult<InfoDto>> GetUser(int id)
         {
-            var product = await _context.Users.FindAsync(id);
-            if (product == null)
+            var profile = await _profileService.InfoUser(id);
+            if (profile == null)
             {
                 return NotFound();
             }
-            return product;
+            return Ok(profile);
         }
 
         [HttpPost]
@@ -43,7 +61,7 @@ namespace CarRental.Controllers
             _context.Users.Add(product);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+            return CreatedAtAction(nameof(GetUser), new { id = product.Id }, product);
         }
 
         [HttpDelete("{id}")]

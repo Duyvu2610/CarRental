@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { Booking } from "../../types/types";
+import { Booking, Profile } from "../../types/types";
 import { baseAxios } from "../../api/axios";
 import { convertStringToLocaleDateTime } from "../../utils/helper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface BookingCardProps {
   data: Booking;
@@ -14,10 +14,32 @@ const BookingCard: React.FC<BookingCardProps> = ({
   onDedeleteSuccess,
 }) => {
     const [isPaid, setIsPaid] = useState<boolean>(false);
+    const [owner, setOwner] = useState<Profile>();
+    const [customer, setCustomer] = useState<Profile>();
+
+    useEffect(() => {
+      baseAxios
+        .get(`/user/${data.idOwner}`)
+        .then((res) => {
+          setOwner(res.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+      baseAxios
+        .get(`/user/${data.idCustomer}`)
+        .then((res) => {
+          setCustomer(res.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }, [data.idOwner, data.idCustomer]);
 
     // Xử lý thanh toán khi nhấn nút
     const handlePayment = () => {
-      // Tạo các thao tác thanh toán tại đây (ví dụ: gọi API)
+      baseAxios.post(`/booking/payment/${data.id}`)
       setIsPaid(true);
     };
 
@@ -82,36 +104,34 @@ const BookingCard: React.FC<BookingCardProps> = ({
               </button>
               <dialog id="modal_pay" className="modal">
                 <div className="modal-box">
-                  <h3 className="font-bold text-lg">Hello!</h3>
                   <p className="py-4">
-                  <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+                  <div className="max-w-lg mx-auto bg-white p-6 rounded-lg">
       <h2 className="text-2xl font-bold mb-4 text-center">Thanh Toán Hóa Đơn</h2>
 
       {/* Thông tin khách hàng */}
       <div className="mb-4">
         <h3 className="text-lg font-semibold">Thông tin khách hàng</h3>
-        <p>ID Khách hàng: 1</p>
-        <p>Tên: 1</p>
-        <p>Email: 1</p>
+        <p>Tên: {customer?.name}</p>
+        <p>Email: {customer?.email}</p>
       </div>
 
       {/* Thông tin chủ xe */}
       <div className="mb-4">
         <h3 className="text-lg font-semibold">Thông tin chủ xe</h3>
-        <p>ID Chủ xe: 1</p>
+        <p>Tên: {owner?.name}</p>
+        <p>Email: {owner?.email}</p>
       </div>
 
       {/* Thông tin đặt xe */}
       <div className="mb-4">
         <h3 className="text-lg font-semibold">Thông tin đặt xe</h3>
-        <p>ID Đặt xe: 1</p>
-        <p>Ngày thanh toán: 1</p>
+        <p>Ngày Đặt: {convertStringToLocaleDateTime(data.bookingDate)}</p>
       </div>
 
       {/* Tổng tiền */}
       <div className="mb-4">
         <h3 className="text-lg font-semibold">Tổng tiền</h3>
-        <p className="text-2xl font-bold text-blue-600">1 VND</p>
+        <p className="text-2xl font-bold text-blue-600">{data.price} VND</p>
       </div>
 
       {/* Nút thanh toán */}

@@ -13,6 +13,7 @@ const routes = {
   car: "/car/:id",
   carregistermodel: "/car/register-model",
   selfdrive: "/car/self-drive",
+  admin: "/admin",
   "forgot-pass": "/forgot-password",
   "reset-pass": "/reset-password",
   "produc-detail": "/products/:id",

@@ -25,6 +25,8 @@ namespace CarRental.Models
         public string? Img { get; set; }
 
         public DateTime? Ngaysinh { get; set; }
+
+        // 1: Nam, 2: Nu, 3 Khac
         public int? GioiTinh { get; set; }
 
         public DateTime CreatedDate { get; set; }

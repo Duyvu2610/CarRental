@@ -1,260 +1,323 @@
 import { useEffect, useState } from "react";
 import { getPullDownBranch } from "../../api/carApi";
 import BrandPullDown from "../../interfaces/car";
-import { callApi } from "../../api/axios";
+import { baseAxios, callApi } from "../../api/axios";
+import { Feature } from "../../types/types";
+
+interface CarRegisterDto {
+  brandKbn: number;
+  carTypeKbn: number;
+  licensePlate: string;
+  numOfSeat: number;
+  driveShaftKbn: number;
+  fuel: string;
+  description: string;
+  note: string;
+  address: string;
+  limitKm: number;
+  priceLimitKm: number;
+  imgUrl: string;
+  limitDeliveryKm: number;
+  price: number;
+}
+
 const SelfDriver: React.FC = () => {
   const [brand, setBrand] = useState<BrandPullDown[]>([]);
+  const [features, setFeatures] = useState<Feature[]>([]);
+  const [typeCar, setTypeCar] = useState<any[]>([]);
+  const [carData, setCarData] = useState<CarRegisterDto>({
+    brandKbn: 0,
+    carTypeKbn: 0,
+    licensePlate: "",
+    numOfSeat: 0,
+    driveShaftKbn: 1,
+    fuel: "",
+    description: "",
+    note: "",
+    address: "",
+    limitKm: 0,
+    priceLimitKm: 0,
+    imgUrl: "",
+    limitDeliveryKm: 0,
+    price: 0,
+  });
 
-    useEffect(() => {
-        const fetchBrand = async () => {
-        try {
-            callApi(() => getPullDownBranch()).then((res) => {
-                setBrand(res);
-            });
-            
-        } catch (error) {
-            console.log(error);
-        }
-        };
-        fetchBrand();
-    }, []);
-    
+  const [imgUrl, setImgUrl] = useState<File | null>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImgUrl(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    baseAxios.post("/car", carData)
+    .then((res) => {
+      console.log(res);
+    }
+    ).catch((error) => {
+      console.log(error);
+    }
+    );
+  };
+
+  useEffect(() => {
+    const fetchBrand = async () => {
+      try {
+        const res = await callApi(() => getPullDownBranch());
+        setBrand(res);
+        fetchFeature();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const fetchFeature = async () => {
+      try {
+        const res = await baseAxios.get("/feature");
+        setFeatures(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchBrand();
+  }, []);
+
+  const fetchTypeCar = async (id: number) => {
+    try {
+      const res = await baseAxios.get("/brand/loai/" + id);
+      setTypeCar(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setCarData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
   return (
     <div className="bg-bg py-12 min-h-[calc(100vh-69px)] ">
-      <div className="max-w-[1280px] mx-auto  flex flex-col relative">
-        <span className="absolute top-0 left-0">bb</span>
+      <div className="max-w-[1280px] mx-auto flex flex-col relative">
         <div className="flex flex-col w-[770px] mx-auto">
           <h2 className="font-bold text-4xl pb-6 text-center">Đăng ký xe</h2>
-          <div className="w-full bg-white flex justify-around p-4 border-b-4 border-bg">
-            <div className="flex flex-col items-center">
-              <p className="h-16 w-16 flex justify-center items-center rounded-full text-white bg-primary">
-                1
+          <form className="bg-white p-8 space-y-6">
+            <div>
+              <label className="font-bold text-xl">Biển số xe</label>
+              <p className="text-red-500 my-2">
+                Lưu ý: Biển số sẽ không thể thay đổi sau khi đăng ký.
               </p>
-              <p className="text-[#aaa]">Thông tin</p>
+              <input
+                type="text"
+                name="licensePlate"
+                value={carData.licensePlate}
+                onChange={handleChange}
+                className="border rounded-lg w-full px-4 py-2"
+              />
+            </div>
+            <div className="mt-6">
+              <label className="font-bold text-xl">Hình ảnh</label>
+              <p className="text-red-500 my-2">Lưu ý: Tải lên ít nhất một hình ảnh của xe.</p>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="border rounded-lg p-2 mt-2"
+              />
+              {imgUrl && (
+                <div className="mt-4">
+                  <img
+                    src={URL.createObjectURL(imgUrl)}
+                    alt="Car Preview"
+                    className="w-36 h-auto rounded-lg border"
+                  />
+                </div>
+              )}
             </div>
 
-            <div className="flex flex-col items-center">
-              <p className="h-16 w-16 flex justify-center items-center rounded-full text-black bg-[#f7fbff]">
-                2
-              </p>
-              <p className="text-[#aaa]">Cho thuê</p>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <p className="h-16 w-16 flex justify-center items-center rounded-full text-black bg-[#f7fbff]">
-                3
-              </p>
-              <p className="text-[#aaa]">Hình ảnh</p>
-            </div>
-          </div>
-          {/* dynamic */}
-          <form className="bg-white p-8">
-            <label htmlFor="" className="font-bold text-xl">
-              Biến số xe
-            </label>
-            <p className="my-2 text-red-500">
-              Lưu ý: Biển số sẽ không thể thay đổi sau khi đăng ký.
-            </p>
-            <input type="text" className="border rounded-lg px-4 py-1" />
-
-            <p className="font-bold text-xl mt-6">Thông tin cơ bản</p>
-            <p className="my-2 text-red-500 mb-6">
-              Lưu ý: Các thông tin cơ bản sẽ không thể thay đổi sau khi đăng ký.
-            </p>
-
+            <p className="font-bold text-xl">Thông tin cơ bản</p>
             <div className="grid grid-cols-2 gap-6">
-              <div className="">
-                <div className="flex flex-col gap-2 mb-6">
-                  <label htmlFor="">Hãng xe</label>
-                  <select className="border rounded-lg px-4 py-2">
-                    {brand.map((item) => (
-                      <option key={item.id} value={item.id}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex flex-col gap-2 mb-6">
-                  <label htmlFor="">Số nghế</label>
-                  <select className="border rounded-lg px-4 py-2">
-                    <option value="">4</option>
-                    <option value="">5</option>
-                    <option value="">6</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-2 mb-6">
-                  <label htmlFor="">Truyền động</label>
-                  <select className="border rounded-lg px-4 py-2">
-                    <option value="">Số tự động</option>
-                    <option value="">Số sàn</option>
-                  </select>
-                </div>
+              <div>
+                <label>Hãng xe</label>
+                <select
+                  name="brandKbn"
+                  className="border rounded-lg w-full px-4 py-2"
+                  onChange={(e) => {
+                    handleChange(e);
+                    fetchTypeCar(Number(e.target.value));
+                  }}
+                >
+                  <option value="">Chọn hãng xe</option>
+                  {brand.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="">
-                <div className="flex flex-col gap-2 mb-6">
-                  <label htmlFor="">Mẫu</label>
-                  <select className="border rounded-lg px-4 py-2">
-                    <option value="">Chọn hãng xe</option>
-                    <option value="">Audi</option>
-                    <option value="">Suzuki</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-2 mb-6">
-                  <label htmlFor="">Năm sản xuất</label>
-                  <select className="border rounded-lg px-4 py-2">
-                    <option value="">2024</option>
-                    <option value="">2025</option>
-                    <option value="">2026</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-2 mb-6">
-                  <label htmlFor="">Loại nhiên liệu</label>
-                  <select className="border rounded-lg px-4 py-2">
-                    <option value="">Xăng</option>
-                    <option value="">Điện</option>
-                  </select>
-                </div>
+
+              <div>
+                <label>Số ghế</label>
+                <input
+                  type="number"
+                  name="numOfSeat"
+                  value={carData.numOfSeat}
+                  onChange={handleChange}
+                  className="border rounded-lg w-full px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label>Truyền động</label>
+                <select
+                  name="driveShaftKbn"
+                  value={carData.driveShaftKbn}
+                  onChange={handleChange}
+                  className="border rounded-lg w-full px-4 py-2"
+                >
+                  <option value="1">Số tự động</option>
+                  <option value="2">Số sàn</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Mẫu</label>
+                <select
+                  name="carTypeKbn"
+                  value={carData.carTypeKbn}
+                  onChange={handleChange}
+                  className="border rounded-lg w-full px-4 py-2"
+                >
+                  <option value="">Chọn mẫu xe</option>
+                  {typeCar.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label>Loại nhiên liệu</label>
+                <select
+                  name="fuel"
+                  value={carData.fuel}
+                  onChange={handleChange}
+                  className="border rounded-lg w-full px-4 py-2"
+                >
+                  <option value="1">Xăng</option>
+                  <option value="2">Điện</option>
+                </select>
+              </div>
+
+              {/* Additional Input Fields */}
+              <div>
+                <label>Địa chỉ</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={carData.address}
+                  onChange={handleChange}
+                  className="border rounded-lg w-full px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label>Giới hạn KM</label>
+                <input
+                  type="number"
+                  name="limitKm"
+                  value={carData.limitKm}
+                  onChange={handleChange}
+                  className="border rounded-lg w-full px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label>Giới hạn KM giá</label>
+                <input
+                  type="number"
+                  name="priceLimitKm"
+                  value={carData.priceLimitKm}
+                  onChange={handleChange}
+                  className="border rounded-lg w-full px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label>Giới hạn KM giao</label>
+                <input
+                  type="number"
+                  name="limitDeliveryKm"
+                  value={carData.limitDeliveryKm}
+                  onChange={handleChange}
+                  className="border rounded-lg w-full px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label>Giá</label>
+                <input
+                  type="number"
+                  name="price"
+                  value={carData.price}
+                  onChange={handleChange}
+                  className="border rounded-lg w-full px-4 py-2"
+                />
               </div>
             </div>
 
-            <p className="font-bold text-xl mt-6 mb-2">Mô tả</p>
-            <textarea
-              className="h-[120px] py-3 px-5 w-full border"
-              placeholder="Huyndai Elantra số tự động đăng ký tháng 06/2018. Xe gia đình mới đẹp, nội thất nguyên bản, sạch sẽ, bảo dưỡng thường xuyên, rửa xe miễn phí cho khách. Xe rộng rãi, an toàn, tiện nghi, phù hợp cho gia đình du lịch. Xe trang bị hệ thống cảm biến lùi, gạt mưa tự động, đèn pha tự động, camera hành trình, hệ thống giải trí AV cùng nhiều tiện nghi khác..."
-            ></textarea>
-            <p className="font-bold text-xl mt-6 mb-2">Tính năng</p>
-            <ul className="grid w-full gap-6 md:grid-cols-3">
-              <li>
-                <input
-                  type="checkbox"
-                  id="map"
-                  value=""
-                  className="hidden peer"
-                />
-                <label
-                  htmlFor="map"
-                  className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:border-primary hover:text-gray-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-600 hover:bg-gray-50 "
-                >
-                  <div className="flex-1">
-                    <img
-                      src="https://n1-cstg.mioto.vn/v4/p/m/icons/features/map-v2.png"
-                      alt=""
-                      className="w-10 mx-auto"
+            <div>
+              <label>Mô tả</label>
+              <textarea
+                name="description"
+                value={carData.description}
+                onChange={handleChange}
+                className="h-[120px] py-3 px-5 w-full border rounded-lg"
+                placeholder="Mô tả về xe..."
+              ></textarea>
+            </div>
+
+            <div>
+              <label>Tính năng</label>
+              <ul className="grid w-full gap-6 md:grid-cols-3">
+                {features.map((item, index) => (
+                  <li key={index} className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id={item.id}
+                      name="features"
+                      value={item.id}
                     />
-                    <div className="w-full text-sm text-center">Bản đồ</div>
-                  </div>
-                </label>
-              </li>
-              <li>
-                <input
-                  type="checkbox"
-                  id="bluetooth"
-                  value=""
-                  className="hidden peer"
-                />
-                <label
-                  htmlFor="bluetooth"
-                  className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:border-primary hover:text-gray-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-600 hover:bg-gray-50 "
-                >
-                  <div className="flex-1">
-                    <img
-                      src="https://n1-cstg.mioto.vn/v4/p/m/icons/features/bluetooth-v2.png"
-                      alt=""
-                      className="w-10 mx-auto"
-                    />
-                    <div className="w-full text-sm text-center">Bluetooth</div>
-                  </div>
-                </label>
-              </li>
-              <li>
-                <input
-                  type="checkbox"
-                  id="camera"
-                  value=""
-                  className="hidden peer"
-                />
-                <label
-                  htmlFor="camera"
-                  className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:border-primary hover:text-gray-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-600 hover:bg-gray-50 "
-                >
-                  <div className="flex-1">
-                    <img
-                      src="https://n1-cstg.mioto.vn/v4/p/m/icons/features/360_camera-v2.png"
-                      alt=""
-                      className="w-10 mx-auto"
-                    />
-                    <div className="w-full text-sm text-center">Camera 360</div>
-                  </div>
-                </label>
-              </li>
-              <li>
-                <input
-                  type="checkbox"
-                  id="pc"
-                  value=""
-                  className="hidden peer"
-                />
-                <label
-                  htmlFor="pc"
-                  className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:border-primary hover:text-gray-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-600 hover:bg-gray-50 "
-                >
-                  <div className="flex-1">
-                    <img
-                      src="https://n1-cstg.mioto.vn/v4/p/m/icons/features/parking_camera-v2.png"
-                      alt=""
-                      className="w-10 mx-auto"
-                    />
-                    <div className="w-full text-sm text-center">
-                      Camera cập lề
-                    </div>
-                  </div>
-                </label>
-              </li>
-              <li>
-                <input
-                  type="checkbox"
-                  id="dc"
-                  value=""
-                  className="hidden peer"
-                />
-                <label
-                  htmlFor="dc"
-                  className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:border-primary hover:text-gray-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-600 hover:bg-gray-50 "
-                >
-                  <div className="flex-1">
-                    <img
-                      src="https://n1-cstg.mioto.vn/v4/p/m/icons/features/dash_camera-v2.png"
-                      alt=""
-                      className="w-10 mx-auto"
-                    />
-                    <div className="w-full text-sm text-center">
-                      Camera hành trình
-                    </div>
-                  </div>
-                </label>
-              </li>
-              <li>
-                <input
-                  type="checkbox"
-                  id="sc"
-                  value=""
-                  className="hidden peer"
-                />
-                <label
-                  htmlFor="sc"
-                  className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:border-primary hover:text-gray-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-600 hover:bg-gray-50 "
-                >
-                  <div className="flex-1">
-                    <img
-                      src="https://n1-cstg.mioto.vn/v4/p/m/icons/features/reverse_camera-v2.png"
-                      alt=""
-                      className="w-10 mx-auto"
-                    />
-                    <div className="w-full text-sm text-center">Camera lùi</div>
-                  </div>
-                </label>
-              </li>
-            </ul>
+                    <label htmlFor={item.id}>{item.name}</label>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <label>Ghi chú</label>
+              <textarea
+                name="note"
+                value={carData.note}
+                onChange={handleChange}
+                className="h-[120px] py-3 px-5 w-full border rounded-lg"
+                placeholder="Ghi chú..."
+              ></textarea>
+            </div>
+
+            <div className="mt-6 flex justify-center">
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                className="px-6 py-2 bg-primary text-white text-xl font-semibold rounded-full"
+              >
+                Đăng ký xe
+              </button>
+            </div>
           </form>
         </div>
       </div>

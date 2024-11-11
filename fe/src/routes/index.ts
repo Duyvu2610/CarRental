@@ -3,6 +3,7 @@ import DefaultLayout from "../layouts/DefaultLayout";
 import SimpleHeaderLayout from "../layouts/SimpleHeaderLayout";
 import AboutPage from "../pages/AboutPage/AboutPage";
 import AccountPage from "../pages/AccountPage/AccountPage";
+import AdminPage from "../pages/Admin/AdminPage";
 import CarPage from "../pages/Car/CarPage";
 import CarRegisterPage from "../pages/CarRegisterPage/CarRegisterPage";
 import SelfDriver from "../pages/CarRegisterPage/Selfdrive";
@@ -13,8 +14,6 @@ import Home from "../pages/Home/Home";
 import LoginPage from "../pages/LoginPage";
 import PageNotFound from "../pages/PageNotFound";
 import Product from "../pages/Product/Product";
-import ProductDetail from "../pages/ProductDetail/ProductDetail";
-import ResetPassword from "../pages/ResetPassword/ResetPassword";
 import SignUpPage from "../pages/SignUpPage";
 
 const publicRoutes = [
@@ -25,6 +24,8 @@ const publicRoutes = [
   { path: config.routes.login, component: LoginPage, layout: DefaultLayout },
   { path: config.routes.carregistermodel, component: CarRegisterPage, layout: DefaultLayout },
   { path: config.routes.selfdrive, component: SelfDriver, layout: DefaultLayout },
+  { path: config.routes.selfdrive, component: SelfDriver, layout: DefaultLayout },
+  { path: config.routes.admin, component: AdminPage, layout: DefaultLayout },
   {
     path: config.routes.signup,
     component: SignUpPage,
@@ -36,16 +37,6 @@ const publicRoutes = [
   {
     path: config.routes["forgot-pass"],
     component: ForgotPassword,
-    layout: DefaultLayout,
-  },
-  {
-    path: config.routes["reset-pass"],
-    component: ResetPassword,
-    layout: DefaultLayout,
-  },
-  {
-    path: config.routes["produc-detail"],
-    component: ProductDetail,
     layout: DefaultLayout,
   },
   { path: config.routes["page-not-found"], component: PageNotFound },

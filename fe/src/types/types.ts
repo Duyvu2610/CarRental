@@ -166,6 +166,7 @@ export interface CarInfo {
 }
 
 export interface Feature {
+  id: string;
   name: string;
   icon: string;
 }
@@ -238,6 +239,7 @@ export interface Booking {
   imageCar: string;
   nameCar: string;
   customerName: string;
+  price: number;
 }
 
 export interface MyCarDto {
@@ -250,6 +252,31 @@ export interface MyCarDto {
 }
 
 export interface CarRequestDto {
+  brandKbn: number;
+  carTypeKbn: number;
+  licensePlate: string;
+  numOfSeat: number;
+  driveShaftKbn: number;
+  fuel: string;
+  description: string;
+  note: string;
+  address: string;
+  limitKm: number;
+  priceLimitKm: number;
+  imgUrl: string;
+  limitDeliveryKm: number;
+  price: number;
+}
+
+export interface UserProfileUpdateDto {
+  name: string;
+  identityCard: string;
+  drivingLicense: string;
+  dob: string;
+  gender: number;
+}
+
+export interface CarRegisterDto {
   brandKbn: number;
   carTypeKbn: number;
   licensePlate: string;

@@ -70,5 +70,23 @@ namespace CarRental.Services
             int IdUser = _jwtUtil.GetIdFromToken(token);
             return await _appDbContext.DonDatXes.CountAsync(x => x.IdCus == IdUser && x.State == 3);
         }
+
+        internal async Task PaymentBookingAsync(string token, int id)
+        {
+            int IdUser = _jwtUtil.GetIdFromToken(token);
+            var donDat = await _appDbContext.DonDatXes
+                .FirstOrDefaultAsync(x => x.ID == id && x.IdCus == IdUser && x.State == 1);
+
+            if (donDat == null)
+            {
+                throw new InvalidOperationException("Booking not found.");
+            }
+
+            donDat.State = 3;
+            var sanPham = await _appDbContext.SanPhams.FirstOrDefaultAsync(x => x.Id == donDat.IdSp);
+            sanPham.State = 2;
+
+            await _appDbContext.SaveChangesAsync();
+        }
     }
 }
