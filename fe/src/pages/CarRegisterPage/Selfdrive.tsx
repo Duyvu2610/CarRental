@@ -3,6 +3,11 @@ import { getPullDownBranch } from "../../api/carApi";
 import BrandPullDown from "../../interfaces/car";
 import { baseAxios, callApi } from "../../api/axios";
 import { Feature } from "../../types/types";
+import axios from "axios";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { auto } from "@cloudinary/url-gen/actions/resize";
+import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
+import { AdvancedImage } from "@cloudinary/react";
 
 interface CarRegisterDto {
   brandKbn: number;
@@ -31,7 +36,7 @@ const SelfDriver: React.FC = () => {
     licensePlate: "",
     numOfSeat: 0,
     driveShaftKbn: 1,
-    fuel: "",
+    fuel: "1",
     description: "",
     note: "",
     address: "",
@@ -42,24 +47,32 @@ const SelfDriver: React.FC = () => {
     price: 0,
   });
 
-  const [imgUrl, setImgUrl] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImgUrl(e.target.files[0]);
-    }
-  };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null); // Trạng thái lỗi
+  const [uploadedImageId, setUploadedImageId] = useState<string | null>(null);
+  const cld = new Cloudinary({ cloud: { cloudName: "insert here" } });
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    baseAxios.post("/car", carData)
-    .then((res) => {
-      console.log(res);
+    try {
+      setUploading(true);
+      const urlImg = await handleUpload();
+      const carDataBody = {
+        ...carData,
+        imgUrl: urlImg,
+      };
+      const res = await baseAxios.post("/car", carDataBody);
+      console.log(res.data);
+      alert("Car registered successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to register car.");
+    } finally {
+      setUploading(false);
     }
-    ).catch((error) => {
-      console.log(error);
-    }
-    );
   };
 
   useEffect(() => {
@@ -94,10 +107,61 @@ const SelfDriver: React.FC = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value } = e.target;
     setCarData((prevData) => ({ ...prevData, [name]: value }));
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+      setError(null);
+    }
+  };
+
+  // Handle image upload
+  const handleUpload = async () => {
+    if (!file) {
+      setError("Please select a file first.");
+      return;
+    }
+
+    setUploading(true);
+    setError(null);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "images");
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/insert here/image/upload`,
+        formData
+      );
+      const publicId = response.data.public_id;
+      const secureUrl = response.data.secure_url;
+
+      setUploadedImageId(publicId);
+      setUploading(false);
+      return secureUrl;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      setUploading(false);
+      setError("Failed to upload image.");
+    }
+  };
+
+  const uploadedImg = uploadedImageId
+    ? cld
+        .image(uploadedImageId)
+        .format("auto")
+        .quality("auto")
+        .resize(auto().gravity(autoGravity()).width(500).height(500))
+    : null;
 
   return (
     <div className="bg-bg py-12 min-h-[calc(100vh-69px)] ">
@@ -120,22 +184,22 @@ const SelfDriver: React.FC = () => {
             </div>
             <div className="mt-6">
               <label className="font-bold text-xl">Hình ảnh</label>
-              <p className="text-red-500 my-2">Lưu ý: Tải lên ít nhất một hình ảnh của xe.</p>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="border rounded-lg p-2 mt-2"
-              />
-              {imgUrl && (
-                <div className="mt-4">
-                  <img
-                    src={URL.createObjectURL(imgUrl)}
-                    alt="Car Preview"
-                    className="w-36 h-auto rounded-lg border"
-                  />
-                </div>
-              )}
+              <p className="text-red-500 my-2">
+                Lưu ý: Tải lên ít nhất một hình ảnh của xe.
+              </p>
+              <div>
+                <input type="file" onChange={handleFileChange} />
+                {uploading && <p>Uploading...</p>}
+                {error && <p style={{ color: "red" }}>{error}</p>}{" "}
+                {uploadedImg && (
+                  <div>
+                    <AdvancedImage
+                      cldImg={uploadedImg}
+                      className="w-32 rounded avatar"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             <p className="font-bold text-xl">Thông tin cơ bản</p>
@@ -313,9 +377,10 @@ const SelfDriver: React.FC = () => {
               <button
                 type="submit"
                 onClick={handleSubmit}
+                disabled={uploading}
                 className="px-6 py-2 bg-primary text-white text-xl font-semibold rounded-full"
               >
-                Đăng ký xe
+                {uploading ? "Đang tải..." : "Đăng ký xe"}
               </button>
             </div>
           </form>

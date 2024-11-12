@@ -1,5 +1,6 @@
 ﻿using CarRental.Data;
 using CarRental.Dto;
+using CarRental.Models;
 using CarRental.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,23 @@ namespace CarRental.Controllers
                 return NotFound();
             }
             return Ok(tinhNangs);
+        }
+
+        [HttpPost("{id}")]
+        public async Task<ActionResult<InfoDto>> GetProfile(int idCar, [FromBody] List<int> payload)
+        {
+            for (int i = 0; i < payload.Count; i++)
+            {
+                var tinhNang = new XeTinhNang
+                {
+                    Idxe = idCar,
+                    Idtinhnang = payload[i]
+                };
+                _context.XeTinhNangs.Add(tinhNang);
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
     }
