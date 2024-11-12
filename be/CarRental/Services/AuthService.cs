@@ -42,6 +42,7 @@ namespace CarRental.Services
                     {
                         IdUser = user.Id,
                         CreatedDate = System.DateTime.Now,
+                        Ngaysinh = System.DateTime.Now,
                     };
 
                     await _context.InfoUsers.AddAsync(infoUser);
