@@ -4,6 +4,7 @@ import { baseAxios } from "../../api/axios";
 import { useEffect, useState } from "react";
 import { convertStringToLocaleDate, convertStringToLocaleDateTime } from "../../utils/helper";
 import { on } from "events";
+import Swal from "sweetalert2";
 
 interface MyCarCardProps {
   data: MyCarDto;
@@ -32,12 +33,22 @@ const MyCarCard: React.FC<MyCarCardProps> = ({ data,onAcceptSuccess, onRejectSuc
     baseAxios
       .get(`/profile/booking/reject/${id}`)
       .then(() => {
-        alert("Từ chối thành công");
+        Swal.fire({
+          title: "Thành công",
+          text: "Từ chối thành công",
+          icon: "success",
+          confirmButtonText: "Okay",
+        });
         setIsToggleReload(!isToggleReload);
         onRejectSuccess();
       })
       .catch((error) => {
-        alert("Từ chối thất bại");
+        Swal.fire({
+          title: "Error",
+          text: error.response.data.error,
+          icon: "error",
+          confirmButtonText: "Okay",
+        });
       });
   };
 
@@ -45,12 +56,22 @@ const MyCarCard: React.FC<MyCarCardProps> = ({ data,onAcceptSuccess, onRejectSuc
         baseAxios
         .get(`/profile/booking/accept/${id}`)
         .then(() => {
-            alert("Xác nhận thành công");
+          Swal.fire({
+            title: "Thành công",
+            text: "Xác nhận thành công",
+            icon: "success",
+            confirmButtonText: "Okay",
+          });
             setIsToggleReload(!isToggleReload);
             onAcceptSuccess();
         })
         .catch((error) => {
-            alert("Xác nhận thất bại");
+          Swal.fire({
+            title: "Error",
+            text: "Xác nhận thất bại",
+            icon: "error",
+            confirmButtonText: "Okay",
+          });
         });
     };
 

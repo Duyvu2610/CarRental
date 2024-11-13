@@ -3,6 +3,7 @@ import { Booking, Profile } from "../../types/types";
 import { baseAxios } from "../../api/axios";
 import { convertStringToLocaleDateTime } from "../../utils/helper";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 interface BookingCardProps {
   data: Booking;
@@ -49,11 +50,21 @@ const BookingCard: React.FC<BookingCardProps> = ({
       baseAxios
         .delete(`/profile/booking/${data.id}`)
         .then(() => {
-          alert("Hủy đơn thuê xe thành công");
+          Swal.fire({
+            title: "Thành công",
+            text: "Hủy đơn thành công",
+            icon: "success",
+            confirmButtonText: "Okay",
+          });
           onDedeleteSuccess();
         })
         .catch((error) => {
-          alert("Hủy đơn thuê xe thất bại");
+          Swal.fire({
+            title: "Error",
+            text: "Hủy đơn thất bại",
+            icon: "error",
+            confirmButtonText: "Okay",
+          });
         });
     }
   };

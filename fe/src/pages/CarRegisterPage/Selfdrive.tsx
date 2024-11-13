@@ -8,6 +8,7 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { auto } from "@cloudinary/url-gen/actions/resize";
 import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
 import { AdvancedImage } from "@cloudinary/react";
+import Swal from "sweetalert2";
 
 interface CarRegisterDto {
   brandKbn: number;
@@ -24,6 +25,7 @@ interface CarRegisterDto {
   imgUrl: string;
   limitDeliveryKm: number;
   price: number;
+  featureList?: number[];
 }
 
 const SelfDriver: React.FC = () => {
@@ -48,12 +50,13 @@ const SelfDriver: React.FC = () => {
   });
 
   const [uploading, setUploading] = useState(false);
+  const [listFeature, setListFeature] = useState<number[]>([]);
 
 
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null); // Trạng thái lỗi
   const [uploadedImageId, setUploadedImageId] = useState<string | null>(null);
-  const cld = new Cloudinary({ cloud: { cloudName: "insert here" } });
+  const cld = new Cloudinary({ cloud: { cloudName: "dnp8wwi3r" } });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,13 +66,18 @@ const SelfDriver: React.FC = () => {
       const carDataBody = {
         ...carData,
         imgUrl: urlImg,
+        featureList: listFeature,
       };
       const res = await baseAxios.post("/car", carDataBody);
+
       console.log(res.data);
-      alert("Car registered successfully!");
+      Swal.fire({
+        title: "Thành công",
+        text: "Cập nhật thông tin thành công",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
     } catch (error) {
-      console.error(error);
-      alert("Failed to register car.");
     } finally {
       setUploading(false);
     }
@@ -116,6 +124,16 @@ const SelfDriver: React.FC = () => {
     setCarData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleFeatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setListFeature((prev) => {
+      if (e.target.checked) {
+        return [...prev, Number(e.target.value)];
+      } else {
+        return prev.filter((item) => item !== Number(e.target.value));
+      }
+    });
+  }
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
@@ -139,7 +157,7 @@ const SelfDriver: React.FC = () => {
 
     try {
       const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/insert here/image/upload`,
+        `https://api.cloudinary.com/v1_1/dnp8wwi3r/image/upload`,
         formData
       );
       const publicId = response.data.public_id;
@@ -355,6 +373,7 @@ const SelfDriver: React.FC = () => {
                       id={item.id}
                       name="features"
                       value={item.id}
+                      onChange={handleFeatureChange}
                     />
                     <label htmlFor={item.id}>{item.name}</label>
                   </li>

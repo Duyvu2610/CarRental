@@ -30,13 +30,13 @@ namespace CarRental.Controllers
         }
 
         [HttpPost("{id}")]
-        public async Task<ActionResult<InfoDto>> GetProfile(int idCar, [FromBody] List<int> payload)
+        public async Task<ActionResult<InfoDto>> GetProfile(int id, [FromBody] List<int> payload)
         {
             for (int i = 0; i < payload.Count; i++)
             {
                 var tinhNang = new XeTinhNang
                 {
-                    Idxe = idCar,
+                    Idxe = id,
                     Idtinhnang = payload[i]
                 };
                 _context.XeTinhNangs.Add(tinhNang);

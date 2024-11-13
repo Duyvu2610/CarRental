@@ -4,6 +4,7 @@ import BookingHistory from "./BookingHistory";
 import MyCar from "./MyCar";
 import ChangePassword from "./ChangePassword";
 import { baseAxios } from "../../api/axios";
+import Swal from "sweetalert2";
 
 const AccountPage: React.FC = () => {
 
@@ -23,12 +24,22 @@ const AccountPage: React.FC = () => {
       if (window.confirm("Bạn có chắc chắn muốn xóa tài khoản không?")) {
         baseAxios.delete("/profile")
           .then(() => {
-            alert("Xóa tài khoản thành công");
+            Swal.fire({
+              title: "Thành công",
+              text: "Xóa tài khoản thành công",
+              icon: "success",
+              confirmButtonText: "Okay",
+            });
             localStorage.removeItem("token");
             window.location.href = "/";
           })
           .catch((error) => {
-            alert("Xóa tài khoản thất bại");
+            Swal.fire({
+              title: "Error",
+              text: "Xoá tài khoản thất bại",
+              icon: "error",
+              confirmButtonText: "Okay",
+            });
           });
       }
     }},

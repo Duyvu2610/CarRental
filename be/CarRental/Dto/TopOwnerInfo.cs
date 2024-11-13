@@ -4,7 +4,7 @@ namespace CarRental.Dto
 {
     public class TopOwnerInfo
     {
-        public InfoUser Owner { get; set; }
-        public int RentalCount { get; set; }
+        public string Name { get; set; }
+        public int Rentals { get; set; }
     }
 }

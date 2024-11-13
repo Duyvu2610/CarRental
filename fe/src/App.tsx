@@ -18,7 +18,7 @@ function App() {
     <Router>
       <Routes>
         {publicRoutes.map((route, index) => {
-          const Page: FC<any> = route.component;
+          const Page: FC<any> = route.component!;
           const Layout = route.layout ? route.layout : Fragment;
           return (
             <Route

@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { baseAxios } from '../../api/axios';
 import { Profile, ProfileRequestDto } from '../../types/types';
+import Swal from 'sweetalert2';
 
 interface UpdateProps {
     onUpdateSuccess: () => void;
@@ -39,11 +40,21 @@ const FormUpdateUser: FC<UpdateProps> = ({onUpdateSuccess, data}) => {
     onSubmit: (values) => {
       baseAxios.put('/profile', values)
         .then(() => {
-          alert('Cập nhật thông tin thành công');
+          Swal.fire({
+            title: "Thành công",
+            text: "Cập nhật thông tin thành công",
+            icon: "success",
+            confirmButtonText: "Okay",
+          });
           onUpdateSuccess();
         })
         .catch((error) => {
-          alert('Cập nhật thông tin thất bại');
+          Swal.fire({
+            title: "Thất bại",
+            text: "Cập nhật thông tin thất bại",
+            icon: "error",
+            confirmButtonText: "Okay",
+          });
           console.error(error);
         });
     },

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarRental.Migrations
 {
     /// <inheritdoc />
-    public partial class a2 : Migration
+    public partial class f222222 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,7 +43,8 @@ namespace CarRental.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Icon = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -79,7 +80,6 @@ namespace CarRental.Migrations
                     UserName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     IdRole = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -89,8 +89,7 @@ namespace CarRental.Migrations
                         name: "FK_Users_Roles_IdRole",
                         column: x => x.IdRole,
                         principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -104,7 +103,9 @@ namespace CarRental.Migrations
                     ImgGplx = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Img = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Ngaysinh = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    GioiTinh = table.Column<int>(type: "int", nullable: true)
+                    GioiTinh = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -129,7 +130,7 @@ namespace CarRental.Migrations
                     Bienso = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Soghe = table.Column<int>(type: "int", nullable: false),
                     Truyendong = table.Column<int>(type: "int", maxLength: 20, nullable: false),
-                    LoaiNl = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    LoaiNl = table.Column<int>(type: "int", maxLength: 30, nullable: false),
                     Mota = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
@@ -155,28 +156,6 @@ namespace CarRental.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "HoaDons",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IdCus = table.Column<int>(type: "int", nullable: false),
-                    IdOwner = table.Column<int>(type: "int", nullable: false),
-                    Paymentdate = table.Column<DateTime>(type: "date", nullable: false),
-                    Total = table.Column<double>(type: "float", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HoaDons", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_HoaDons_InfoUsers_IdOwner",
-                        column: x => x.IdOwner,
-                        principalTable: "InfoUsers",
-                        principalColumn: "IdUser",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SanPhams",
                 columns: table => new
                 {
@@ -188,6 +167,7 @@ namespace CarRental.Migrations
                     Diachixe = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LimitXechay = table.Column<int>(type: "int", nullable: false),
                     GiaVuot = table.Column<double>(type: "float", nullable: false),
+                    Truyendong = table.Column<int>(type: "int", nullable: false),
                     Img = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     GioiHankmgiaoxe = table.Column<int>(type: "int", nullable: false),
                     Gia = table.Column<double>(type: "float", nullable: false),
@@ -234,34 +214,6 @@ namespace CarRental.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CTHDs",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IDHD = table.Column<int>(type: "int", nullable: false),
-                    IdSp = table.Column<int>(type: "int", nullable: false),
-                    Gia = table.Column<double>(type: "float", nullable: false),
-                    Checkin = table.Column<DateTime>(type: "date", nullable: false),
-                    Checkout = table.Column<DateTime>(type: "date", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CTHDs", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_CTHDs_HoaDons_IDHD",
-                        column: x => x.IDHD,
-                        principalTable: "HoaDons",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CTHDs_SanPhams_IdSp",
-                        column: x => x.IdSp,
-                        principalTable: "SanPhams",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DonDatXes",
                 columns: table => new
                 {
@@ -274,27 +226,28 @@ namespace CarRental.Migrations
                     ngayDat = table.Column<DateTime>(type: "datetime2", nullable: false),
                     checkin = table.Column<DateTime>(type: "date", nullable: false),
                     checkout = table.Column<DateTime>(type: "date", nullable: false),
-                    State = table.Column<int>(type: "int", nullable: false)
+                    State = table.Column<int>(type: "int", nullable: false),
+                    SanPhamId = table.Column<int>(type: "int", nullable: true),
+                    InfoUserCusIdUser = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DonDatXes", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_DonDatXes_InfoUsers_IdCus",
-                        column: x => x.IdCus,
-                        principalTable: "InfoUsers",
-                        principalColumn: "IdUser");
                     table.ForeignKey(
                         name: "FK_DonDatXes_InfoUsers_IdOwner",
                         column: x => x.IdOwner,
                         principalTable: "InfoUsers",
                         principalColumn: "IdUser");
                     table.ForeignKey(
-                        name: "FK_DonDatXes_SanPhams_IdSp",
-                        column: x => x.IdSp,
+                        name: "FK_DonDatXes_InfoUsers_InfoUserCusIdUser",
+                        column: x => x.InfoUserCusIdUser,
+                        principalTable: "InfoUsers",
+                        principalColumn: "IdUser");
+                    table.ForeignKey(
+                        name: "FK_DonDatXes_SanPhams_SanPhamId",
+                        column: x => x.SanPhamId,
                         principalTable: "SanPhams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -331,6 +284,62 @@ namespace CarRental.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "HoaDons",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdCus = table.Column<int>(type: "int", nullable: false),
+                    IdOwner = table.Column<int>(type: "int", nullable: false),
+                    IdBooking = table.Column<int>(type: "int", nullable: false),
+                    Paymentdate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Total = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HoaDons", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_HoaDons_DonDatXes_IdBooking",
+                        column: x => x.IdBooking,
+                        principalTable: "DonDatXes",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_HoaDons_InfoUsers_IdOwner",
+                        column: x => x.IdOwner,
+                        principalTable: "InfoUsers",
+                        principalColumn: "IdUser",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CTHDs",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IDHD = table.Column<int>(type: "int", nullable: false),
+                    IdSp = table.Column<int>(type: "int", nullable: false),
+                    Gia = table.Column<double>(type: "float", nullable: false),
+                    Checkin = table.Column<DateTime>(type: "date", nullable: false),
+                    Checkout = table.Column<DateTime>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CTHDs", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_CTHDs_HoaDons_IDHD",
+                        column: x => x.IDHD,
+                        principalTable: "HoaDons",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CTHDs_SanPhams_IdSp",
+                        column: x => x.IdSp,
+                        principalTable: "SanPhams",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CTHDs_IDHD",
                 table: "CTHDs",
@@ -342,19 +351,19 @@ namespace CarRental.Migrations
                 column: "IdSp");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DonDatXes_IdCus",
-                table: "DonDatXes",
-                column: "IdCus");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DonDatXes_IdOwner",
                 table: "DonDatXes",
                 column: "IdOwner");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DonDatXes_IdSp",
+                name: "IX_DonDatXes_InfoUserCusIdUser",
                 table: "DonDatXes",
-                column: "IdSp");
+                column: "InfoUserCusIdUser");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DonDatXes_SanPhamId",
+                table: "DonDatXes",
+                column: "SanPhamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Feedbacks_IdCar",
@@ -370,6 +379,12 @@ namespace CarRental.Migrations
                 name: "IX_Feedbacks_InfoUserIdUser",
                 table: "Feedbacks",
                 column: "InfoUserIdUser");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HoaDons_IdBooking",
+                table: "HoaDons",
+                column: "IdBooking",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_HoaDons_IdOwner",
@@ -425,9 +440,6 @@ namespace CarRental.Migrations
                 name: "CTHDs");
 
             migrationBuilder.DropTable(
-                name: "DonDatXes");
-
-            migrationBuilder.DropTable(
                 name: "Feedbacks");
 
             migrationBuilder.DropTable(
@@ -437,10 +449,13 @@ namespace CarRental.Migrations
                 name: "HoaDons");
 
             migrationBuilder.DropTable(
-                name: "SanPhams");
+                name: "TinhNangs");
 
             migrationBuilder.DropTable(
-                name: "TinhNangs");
+                name: "DonDatXes");
+
+            migrationBuilder.DropTable(
+                name: "SanPhams");
 
             migrationBuilder.DropTable(
                 name: "InfoUsers");

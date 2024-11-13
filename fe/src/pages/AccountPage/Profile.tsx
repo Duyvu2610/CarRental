@@ -281,32 +281,7 @@ const Profile: React.FC = () => {
         </div>
       </div>
 
-      {/* Driver's License */}
-      <div className="bg-white shadow-md p-6 rounded-md">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Giấy phép lái xe</h3>
-          {!user.verified.license && (
-            <span className="text-sm bg-red-200 text-red-700 px-2 py-0.5 rounded-md">
-              Chưa xác thực
-            </span>
-          )}
-          <button className="text-blue-500">Chỉnh sửa</button>
-        </div>
-        <p className="text-red-500 mt-2">
-          Lưu ý: để tránh phát sinh vấn đề trong quá trình thuê xe, người đặt xe
-          (đã xác thực GPLX) đồng thời phải là người nhận xe.
-        </p>
-        <div className="mt-4">
-          <label className="text-gray-600">Số GPLX</label>
-          <input
-            type="text"
-            className="w-full mt-2 px-4 py-2 border rounded-md"
-            placeholder="Nhập số GPLX đã cấp"
-            value={user.licenseNumber}
-            readOnly={!user.verified.license}
-          />
-        </div>
-      </div>
+    
     </div>
   );
 };

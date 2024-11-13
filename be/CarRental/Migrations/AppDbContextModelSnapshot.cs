@@ -71,8 +71,14 @@ namespace CarRental.Migrations
                     b.Property<int>("IdSp")
                         .HasColumnType("int");
 
+                    b.Property<int?>("InfoUserCusIdUser")
+                        .HasColumnType("int");
+
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SanPhamId")
+                        .HasColumnType("int");
 
                     b.Property<int>("State")
                         .HasColumnType("int");
@@ -88,11 +94,11 @@ namespace CarRental.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("IdCus");
-
                     b.HasIndex("IdOwner");
 
-                    b.HasIndex("IdSp");
+                    b.HasIndex("InfoUserCusIdUser");
+
+                    b.HasIndex("SanPhamId");
 
                     b.ToTable("DonDatXes");
                 });
@@ -467,23 +473,19 @@ namespace CarRental.Migrations
 
             modelBuilder.Entity("CarRental.Models.DonDatXe", b =>
                 {
-                    b.HasOne("CarRental.Models.InfoUser", "InfoUserCus")
-                        .WithMany("DonDatXesCus")
-                        .HasForeignKey("IdCus")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("CarRental.Models.InfoUser", "infoUserOwner")
                         .WithMany("DonDatXesOwner")
                         .HasForeignKey("IdOwner")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("CarRental.Models.InfoUser", "InfoUserCus")
+                        .WithMany("DonDatXesCus")
+                        .HasForeignKey("InfoUserCusIdUser");
+
                     b.HasOne("CarRental.Models.SanPham", "SanPham")
                         .WithMany("DonDatXes")
-                        .HasForeignKey("IdSp")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SanPhamId");
 
                     b.Navigation("InfoUserCus");
 
@@ -607,7 +609,7 @@ namespace CarRental.Migrations
                     b.HasOne("CarRental.Models.Role", "role")
                         .WithMany("Users")
                         .HasForeignKey("IdRole")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("role");

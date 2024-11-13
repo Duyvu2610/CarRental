@@ -39,79 +39,50 @@ namespace CarRental.Services
                     owner => owner.IdUser,
                     (topOwner, owner) => new TopOwnerInfo
                     {
-                        Owner = owner,
-                        RentalCount = topOwner.RentalCount
+                        Name = owner.Name,
+                        Rentals = topOwner.RentalCount
                     })
-                .OrderByDescending(x => x.RentalCount)
+                .OrderByDescending(x => x.Rentals)
                 .ToList();
 
             return result;
         }
 
-        public async Task<Dictionary<string, List<TopCustomerInfo>>> GetTopCustomersByRentalCount()
+        public async Task<List<TopOwnerInfo>> GetTopCustomersByRentalCount()
         {
-            var rentalCounts = await _appDbContext.DonDatXes
+            var topCustomers = await _appDbContext.DonDatXes
                 .GroupBy(x => x.IdCus)
                 .Select(g => new
                 {
                     IdCus = g.Key,
                     RentalCount = g.Count()
                 })
+                .OrderByDescending(x => x.RentalCount)
                 .ToListAsync();
 
-            var customerIds = rentalCounts.Select(x => x.IdCus).ToList();
+            var customerIds = topCustomers.Select(x => x.IdCus).ToList();
 
             var customers = await _appDbContext.InfoUsers
                 .Where(user => customerIds.Contains(user.IdUser))
                 .ToListAsync();
 
-            var result = new Dictionary<string, List<TopCustomerInfo>>
-            {
-                { ">5 Rentals", new List<TopCustomerInfo>() },
-                { ">10 Rentals", new List<TopCustomerInfo>() },
-                { ">20 Rentals", new List<TopCustomerInfo>() },
-                { "another", new List<TopCustomerInfo>() }
-            };
-
-            foreach (var rental in rentalCounts)
-            {
-                var customer = customers.FirstOrDefault(c => c.IdUser == rental.IdCus);
-                if (customer != null)
-                {
-                    var customerInfo = new TopCustomerInfo
+            var result = topCustomers
+                .Join(
+                    customers,
+                    topCustomer => topCustomer.IdCus,
+                    customer => customer.IdUser,
+                    (topCustomer, customer) => new TopOwnerInfo
                     {
-                        Customer = customer,
-                        RentalCount = rental.RentalCount
-                    };
-
-                    if (rental.RentalCount > 5)
-                    {
-                        result[">5 Rentals"].Add(customerInfo);
-                    }
-                    if (rental.RentalCount > 10)
-                    {
-                        result[">10 Rentals"].Add(customerInfo);
-                    }
-                    if (rental.RentalCount > 20)
-                    {
-                        result[">20 Rentals"].Add(customerInfo);
-                    }
-                    else
-                    {
-                        result["another"].Add(customerInfo);
-                    }
-                }
-            }
-
-            foreach (var key in result.Keys)
-            {
-                result[key] = result[key].OrderByDescending(x => x.RentalCount).ToList();
-            }
+                        Name = customer.Name,
+                        Rentals = topCustomer.RentalCount
+                    })
+                .OrderByDescending(x => x.Rentals)
+                .ToList();
 
             return result;
         }
 
-        public async Task<Dictionary<string, List<InfoUser>>> GetRentalStatisticsLists()
+        public async Task<Object> GetRentalStatisticsLists()
         {
             // Get unique customer IDs who have rented cars
             var renterIds = await _appDbContext.DonDatXes
@@ -136,10 +107,10 @@ namespace CarRental.Services
                 .ToListAsync();
 
             // Return the lists in a dictionary
-            var result = new Dictionary<string, List<InfoUser>>
+            var result = new Dictionary<string, int>
             {
-                { "Renters", renters },
-                { "Owners", owners }
+                { "rentersCount", renters.Count },
+                { "ownersCount", owners.Count }
             };
 
             return result;

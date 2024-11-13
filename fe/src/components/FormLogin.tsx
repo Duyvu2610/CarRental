@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { baseAxios, loginUser } from '../api/axios';
+import Swal from 'sweetalert2';
 
 interface FormLoginProps {
     onClickSignUp: () => void;
@@ -32,12 +33,27 @@ const FormLogin: FC<FormLoginProps> = ({ onClickSignUp, onLoginSuccess }) => {
         onSubmit: (values) => {
           loginUser(values)
             .then(() => {
-              alert('Đăng nhập thành công');
+              Swal.fire({
+                title: "Thành công",
+                text: "Đăng nhập thành công",
+                icon: "success",
+                confirmButtonText: "Okay",
+                customClass: {
+                  popup: 'swal-custom-zindex'
+                }
+              });
               onLoginSuccess();
             })
             .catch((error) => {
-              alert('Đăng nhập thất bại');
-              console.error(error);
+              Swal.fire({
+                title: "Error",
+                text: "Đăng nhập thất bại",
+                icon: "error",
+                confirmButtonText: "Okay",
+                customClass: {
+                  popup: 'swal-custom-zindex'
+                }
+              });
             });
         },
       });

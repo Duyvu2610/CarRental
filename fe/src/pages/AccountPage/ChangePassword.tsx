@@ -2,6 +2,7 @@ import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { baseAxios } from '../../api/axios';
+import Swal from 'sweetalert2';
 
 const ChangePassword: React.FC = () => {
   // Validation schema
@@ -29,11 +30,20 @@ const ChangePassword: React.FC = () => {
   const handleSubmit = (values: typeof initialValues) => {
     baseAxios.post('/auth/password', values)
         .then(() => {
-            alert('Đổi mật khẩu thành công');
+          Swal.fire({
+            title: "Thành công",
+            text: "Đổi mật khẩu thành công",
+            icon: "success",
+            confirmButtonText: "Okay",
+          });
         })
         .catch((error) => {
-            alert('Đổi mật khẩu thất bại');
-            console.error(error);
+          Swal.fire({
+            title: "Error",
+            text: "Đổi mật khẩu thất bại",
+            icon: "error",
+            confirmButtonText: "Okay",
+          });
         });
   };
 

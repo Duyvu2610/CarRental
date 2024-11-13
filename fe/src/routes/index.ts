@@ -7,9 +7,7 @@ import AdminPage from "../pages/Admin/AdminPage";
 import CarPage from "../pages/Car/CarPage";
 import CarRegisterPage from "../pages/CarRegisterPage/CarRegisterPage";
 import SelfDriver from "../pages/CarRegisterPage/Selfdrive";
-import CartPage from "../pages/Cart/CartPage";
 import Contact from "../pages/Contact";
-import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import Home from "../pages/Home/Home";
 import LoginPage from "../pages/LoginPage";
 import PageNotFound from "../pages/PageNotFound";
@@ -33,10 +31,8 @@ const publicRoutes = [
   },
   { path: config.routes.product, component: Product, layout: DefaultLayout },
   { path: config.routes.contact, component: Contact, layout: DefaultLayout },
-  { path: config.routes.cart, component: CartPage, layout: DefaultLayout },
   {
     path: config.routes["forgot-pass"],
-    component: ForgotPassword,
     layout: DefaultLayout,
   },
   { path: config.routes["page-not-found"], component: PageNotFound },

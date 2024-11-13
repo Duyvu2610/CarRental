@@ -127,7 +127,7 @@ namespace CarRental.Data
                 entity.HasOne(r => r.role)
                 .WithMany(u => u.Users)
                 .HasForeignKey(u => u.IdRole)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(i => i.InfoUser)
                 .WithOne(u => u.User)
@@ -225,20 +225,10 @@ namespace CarRental.Data
                .HasColumnType("date")
                .IsRequired();
 
-                entity.HasOne(i => i.InfoUserCus)
-                .WithMany(d => d.DonDatXesCus)
-                .HasForeignKey(d => d.IdCus)
-                .OnDelete(DeleteBehavior.NoAction);
-
                 entity.HasOne(i => i.infoUserOwner)
                 .WithMany(d => d.DonDatXesOwner)
                 .HasForeignKey(d => d.IdOwner)
                 .OnDelete(DeleteBehavior.NoAction);
-
-                entity.HasOne(i => i.SanPham)
-                .WithMany(d => d.DonDatXes)
-                .HasForeignKey(d => d.IdSp)
-                .OnDelete(DeleteBehavior.Cascade);
 
             });
 

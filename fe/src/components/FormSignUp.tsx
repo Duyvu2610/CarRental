@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { baseAxios } from '../api/axios';
+import Swal from 'sweetalert2';
 
 interface FormSignUpProps {
   onClickLogin: () => void;
@@ -34,11 +35,21 @@ const FormSignUp: FC<FormSignUpProps> = ({ onClickLogin }) => {
     onSubmit: (values) => {
       baseAxios.post('/auth/register', values)
         .then(() => {
-          alert('Đăng ký thành công');
+          Swal.fire({
+            title: "Thành công",
+            text: "Đăng ký thành công",
+            icon: "success",
+            confirmButtonText: "Okay",
+          });
           onClickLogin();
         })
         .catch((error) => {
-          alert('Đăng ký thất bại');
+          Swal.fire({
+            title: "Thất bại",
+            text: "Dăng ký thất bại",
+            icon: "error",
+            confirmButtonText: "Okay",
+          });
           console.error(error);
         });
     },
