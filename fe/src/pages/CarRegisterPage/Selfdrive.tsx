@@ -61,6 +61,15 @@ const SelfDriver: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      if (carData.limitKm < 0 || carData.priceLimitKm < 0 || carData.limitDeliveryKm < 0 || carData.price < 0) {
+        Swal.fire({
+          title: "Lỗi",
+          text: "Giá trị không hợp lệ",
+          icon: "error",
+          confirmButtonText: "Okay",
+        });
+        return;
+      }
       setUploading(true);
       const urlImg = await handleUpload();
       const carDataBody = {
@@ -292,6 +301,7 @@ const SelfDriver: React.FC = () => {
                 >
                   <option value="1">Xăng</option>
                   <option value="2">Điện</option>
+                  <option value="3">Dầu</option>
                 </select>
               </div>
 
@@ -313,6 +323,7 @@ const SelfDriver: React.FC = () => {
                   type="number"
                   name="limitKm"
                   value={carData.limitKm}
+                  min="0"
                   onChange={handleChange}
                   className="border rounded-lg w-full px-4 py-2"
                 />
@@ -324,6 +335,7 @@ const SelfDriver: React.FC = () => {
                   type="number"
                   name="priceLimitKm"
                   value={carData.priceLimitKm}
+                  min="0"
                   onChange={handleChange}
                   className="border rounded-lg w-full px-4 py-2"
                 />
@@ -335,6 +347,7 @@ const SelfDriver: React.FC = () => {
                   type="number"
                   name="limitDeliveryKm"
                   value={carData.limitDeliveryKm}
+                  min="0"
                   onChange={handleChange}
                   className="border rounded-lg w-full px-4 py-2"
                 />
@@ -346,6 +359,7 @@ const SelfDriver: React.FC = () => {
                   type="number"
                   name="price"
                   value={carData.price}
+                  min="0"
                   onChange={handleChange}
                   className="border rounded-lg w-full px-4 py-2"
                 />

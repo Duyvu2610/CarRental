@@ -1,7 +1,7 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { baseAxios, loginUser } from '../api/axios';
+import {loginUser } from '../api/axios';
 import Swal from 'sweetalert2';
 
 interface FormLoginProps {
@@ -38,6 +38,7 @@ const FormLogin: FC<FormLoginProps> = ({ onClickSignUp, onLoginSuccess }) => {
                 text: "Đăng nhập thành công",
                 icon: "success",
                 confirmButtonText: "Okay",
+                target: document.getElementById('form-modal'),
                 customClass: {
                   popup: 'swal-custom-zindex'
                 }
@@ -50,6 +51,7 @@ const FormLogin: FC<FormLoginProps> = ({ onClickSignUp, onLoginSuccess }) => {
                 text: "Đăng nhập thất bại",
                 icon: "error",
                 confirmButtonText: "Okay",
+                target: document.getElementById('form-modal'),
                 customClass: {
                   popup: 'swal-custom-zindex'
                 }
@@ -59,7 +61,7 @@ const FormLogin: FC<FormLoginProps> = ({ onClickSignUp, onLoginSuccess }) => {
       });
     
       return (
-        <div className="flex items-center justify-center">
+        <div id='form-modal' className="flex items-center justify-center">
           <div className="w-full max-w-md p-8 bg-white">
             <h2 className="mb-6 text-2xl font-bold text-center">Đăng nhập</h2>
             

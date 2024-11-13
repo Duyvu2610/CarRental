@@ -1,5 +1,6 @@
 ﻿
 
+using CarRental.Dto;
 using CarRental.Models;
 using CarRental.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,28 @@ namespace CarRental.Controllers
         {
             var carTypes = await _brandService.SearchCarType(id);
             return Ok(carTypes);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateBrand([FromBody] FeatureDto brand)
+        {
+            var newBrand = await _brandService.CreateBrand(brand);
+            if (!newBrand)
+            {
+                return BadRequest("Brand already exists");
+            }
+            return Ok();
+        }
+
+        [HttpPost("loaixe")]
+        public async Task<ActionResult> CreateCarType([FromBody] FeatureDto brand)
+        {
+            var newBrand = await _brandService.CreateCarType(brand);
+            if (!newBrand)
+            {
+                return BadRequest("Brand already exists");
+            }
+            return Ok();
         }
     }
 }

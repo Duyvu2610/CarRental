@@ -46,5 +46,13 @@ namespace CarRental.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        public async Task<ActionResult<InfoDto>> CreateFeature([FromBody] TinhNang tinhNang)
+        {
+            _context.TinhNangs.Add(tinhNang);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
     }
 }

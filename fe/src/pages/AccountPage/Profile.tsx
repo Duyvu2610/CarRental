@@ -2,28 +2,23 @@ import { useEffect, useState } from "react";
 import { Profile as MyProfile } from "../../types/types";
 import { baseAxios } from "../../api/axios";
 import FormUpdateUser from "./UpdateProfile";
+import { Cloudinary } from "@cloudinary/url-gen";
+import axios from "axios";
+import { AdvancedImage } from "@cloudinary/react";
+import { auto } from "@cloudinary/url-gen/actions/resize";
+import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
 
 const Profile: React.FC = () => {
-  // Mock data for the user profile
-  const user = {
-    name: "Vũ Nguyễn Duy",
-    joinedDate: "04/11/2024",
-    phoneNumber: "0123456789",
-    email: "duyvudev@gmail.com",
-    socialMedia: {
-      facebook: "Duy Vũ",
-      google: "Vũ Nguyễn Duy",
-    },
-    trips: 0,
-    verified: {
-      phone: true,
-      email: true,
-      license: false,
-    },
-    licenseNumber: "",
-  };
+
   const [myProfile, setMyProfile] = useState<MyProfile | null>(null);
   const [totalRented, setTotalRented] = useState<number>(0);
+
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null); // Trạng thái lỗi
+  const [uploadedImageId, setUploadedImageId] = useState<string | null>(null);
+  const cld = new Cloudinary({ cloud: { cloudName: "dnp8wwi3r" } });
+  const [uploading, setUploading] = useState(false);
+  const [isReload, setIsReload] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -47,7 +42,7 @@ const Profile: React.FC = () => {
 
     fetchProfile();
     fetchTotalRented();
-  }, []);
+  }, [isReload]);
 
   const formatDate = (dateString : Date = new Date()): string => {
     const date = new Date(dateString);
@@ -56,6 +51,47 @@ const Profile: React.FC = () => {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   } 
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+      setError(null);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      setError("Please select a file first.");
+      return;
+    }
+
+    setUploading(true);
+    setError(null);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "images");
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/dnp8wwi3r/image/upload`,
+        formData
+      );
+      const publicId = response.data.public_id;
+      const secureUrl = response.data.secure_url;
+
+      setUploadedImageId(publicId);
+      setUploading(false);
+      await baseAxios.post("/auth/uploadImage?url=" + secureUrl );
+      setIsReload(!isReload);
+      return secureUrl;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      setUploading(false);
+      setError("Failed to upload image.");
+    }
+  };
+
   return (
     <div>
       {/* Account Information */}
@@ -133,11 +169,13 @@ const Profile: React.FC = () => {
             <span>chuyến</span>
           </div>
         </div>
-        <div className="grid grid-cols-6">
+        <div className="grid grid-cols-6 gap-4">
           {/* Profile Picture and Name */}
           <div className="flex flex-col col-span-2 items-center">
             <img src={myProfile?.img} alt="avatar" className="w-40 h-40  text-4xl flex items-center justify-center rounded-full"/>
-              
+            <input type="file" className="file-input file-input-bordered w-full max-w-xs m-4" onChange={handleFileChange} />
+                {uploading && <p>Uploading...</p>}
+                <button onClick={handleUpload} className="btn">Upload</button>
             <h3 className="text-2xl font-semibold mt-4 flex-1">{myProfile?.name}</h3>
             <p className="text-gray-500 flex-1">Tham gia: {formatDate(myProfile?.createdDate)}</p>
             <div className="flex items-center mt-2 p-2 border rounded-lg">

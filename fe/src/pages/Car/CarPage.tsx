@@ -253,8 +253,8 @@ const CarPage: React.FC = () => {
                     {car?.fuel === "1"
                       ? "Xăng"
                       : car?.fuel === "2"
-                      ? "Dầu"
-                      : "Điện"}
+                      ? "Điện"
+                      : "Dầu"}
                   </p>
                 </div>
               </div>

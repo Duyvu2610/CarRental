@@ -1,4 +1,6 @@
-﻿namespace CarRental.Models
+﻿using System.Text.Json.Serialization;
+
+namespace CarRental.Models
 {
     public class TinhNang
     {
@@ -7,7 +9,8 @@
 
         public string Icon { get; set; }
 
-        public virtual List<XeTinhNang> XeTinhNang { get ; set; }
+        [JsonIgnore]
+        public virtual List<XeTinhNang>? XeTinhNang { get ; set; }
         
     }
 }

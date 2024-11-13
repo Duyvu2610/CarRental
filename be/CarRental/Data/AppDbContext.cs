@@ -215,6 +215,16 @@ namespace CarRental.Data
 
                 entity.Property(e => e.ngayDat).IsRequired();
 
+                entity.HasOne(i => i.InfoUserCus)
+                .WithMany(d => d.DonDatXesCus)
+                .HasForeignKey(d => d.IdCus)
+                .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(i => i.SanPham)
+                .WithMany(d => d.DonDatXes)
+                .HasForeignKey(d => d.IdSp)
+                .OnDelete(DeleteBehavior.NoAction);
+
 
 
                 entity.Property(e => e.checkin)

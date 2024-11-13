@@ -1,9 +1,7 @@
-import { Link } from "react-router-dom";
-import { Booking, MyCarDto, Profile } from "../../types/types";
+import { Booking, MyCarDto} from "../../types/types";
 import { baseAxios } from "../../api/axios";
 import { useEffect, useState } from "react";
 import { convertStringToLocaleDate, convertStringToLocaleDateTime } from "../../utils/helper";
-import { on } from "events";
 import Swal from "sweetalert2";
 
 interface MyCarCardProps {
@@ -95,32 +93,6 @@ const MyCarCard: React.FC<MyCarCardProps> = ({ data,onAcceptSuccess, onRejectSuc
       <td>
         {data.description}
         <br />
-        <button
-          onClick={() =>
-            (
-              document.getElementById(
-                `my_modal_${data.id}`
-              ) as HTMLDialogElement
-            ).showModal()
-          }
-          className="btn btn-ghost btn-xs"
-        >
-          Chi tiết
-        </button>
-        <dialog id={`my_modal_${data.id}`} className="modal">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Hello!</h3>
-            <p className="py-4">
-              Press ESC key or click the button below to close
-            </p>
-            <div className="modal-action">
-              <form method="dialog">
-                {/* if there is a button in form, it will close the modal */}
-                <button className="btn">Close</button>
-              </form>
-            </div>
-          </div>
-        </dialog>
       </td>
       <td>
         {data.state === 0 && (
@@ -189,7 +161,6 @@ const MyCarCard: React.FC<MyCarCardProps> = ({ data,onAcceptSuccess, onRejectSuc
             </p>
             <div className="modal-action">
               <form method="dialog">
-                {/* if there is a button in form, it will close the modal */}
                 <button className="btn">Close</button>
               </form>
             </div>

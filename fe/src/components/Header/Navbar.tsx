@@ -6,6 +6,8 @@ import Logo from "../../assets/images/alphabet.png";
 import routes from "../../config/routes";
 import FormSignUp from "../FormSignUp";
 import FormLogin from "../FormLogin";
+import { Profile } from "../../types/types";
+import { baseAxios } from "../../api/axios";
 
 const Navbar: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,6 +16,7 @@ const Navbar: FC = () => {
     localStorage.getItem("token") ? true : false
   );
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const [myProfile, setMyProfile] = useState<Profile | null>(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -26,6 +29,19 @@ const Navbar: FC = () => {
       }
     };
 
+    const fetchProfile = async () => {
+      try {
+        const response = await baseAxios.get("/profile");
+        setMyProfile(response.data);
+        
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProfile();
+
+
     if (isMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
@@ -35,6 +51,7 @@ const Navbar: FC = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+
   }, [isMenuOpen]);
 
   return (
@@ -70,7 +87,7 @@ const Navbar: FC = () => {
                 <div className="border-r h-6"></div>
 
                 <NavLink to={routes.account} key={routes.account}>
-                  Xin chào
+                  {myProfile?.name === null ? myProfile?.email.split("@")[0] : myProfile?.name}
                 </NavLink>
               </>
             ) : (

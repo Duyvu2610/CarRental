@@ -71,14 +71,8 @@ namespace CarRental.Migrations
                     b.Property<int>("IdSp")
                         .HasColumnType("int");
 
-                    b.Property<int?>("InfoUserCusIdUser")
-                        .HasColumnType("int");
-
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SanPhamId")
-                        .HasColumnType("int");
 
                     b.Property<int>("State")
                         .HasColumnType("int");
@@ -94,11 +88,11 @@ namespace CarRental.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("IdCus");
+
                     b.HasIndex("IdOwner");
 
-                    b.HasIndex("InfoUserCusIdUser");
-
-                    b.HasIndex("SanPhamId");
+                    b.HasIndex("IdSp");
 
                     b.ToTable("DonDatXes");
                 });
@@ -473,19 +467,23 @@ namespace CarRental.Migrations
 
             modelBuilder.Entity("CarRental.Models.DonDatXe", b =>
                 {
+                    b.HasOne("CarRental.Models.InfoUser", "InfoUserCus")
+                        .WithMany("DonDatXesCus")
+                        .HasForeignKey("IdCus")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("CarRental.Models.InfoUser", "infoUserOwner")
                         .WithMany("DonDatXesOwner")
                         .HasForeignKey("IdOwner")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("CarRental.Models.InfoUser", "InfoUserCus")
-                        .WithMany("DonDatXesCus")
-                        .HasForeignKey("InfoUserCusIdUser");
-
                     b.HasOne("CarRental.Models.SanPham", "SanPham")
                         .WithMany("DonDatXes")
-                        .HasForeignKey("SanPhamId");
+                        .HasForeignKey("IdSp")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("InfoUserCus");
 

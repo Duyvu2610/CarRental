@@ -29,6 +29,10 @@
   scroll-behavior: smooth;
 }
 
+.swal2-container {
+  z-index: 1000000000 !important;
+}
+
 *::selection {
   background-color: var(--primary-color);
   color: white;

@@ -39,6 +39,7 @@ const FormSignUp: FC<FormSignUpProps> = ({ onClickLogin }) => {
             title: "Thành công",
             text: "Đăng ký thành công",
             icon: "success",
+            target: document.getElementById('form-modal2'),
             confirmButtonText: "Okay",
           });
           onClickLogin();
@@ -48,6 +49,7 @@ const FormSignUp: FC<FormSignUpProps> = ({ onClickLogin }) => {
             title: "Thất bại",
             text: "Dăng ký thất bại",
             icon: "error",
+            target: document.getElementById('form-modal2'),
             confirmButtonText: "Okay",
           });
           console.error(error);
@@ -56,7 +58,7 @@ const FormSignUp: FC<FormSignUpProps> = ({ onClickLogin }) => {
   });
 
   return (
-    <div className="flex items-center justify-center">
+    <div id='form-modal2' className="flex items-center justify-center">
       <div className="w-full max-w-md p-8 bg-white">
         <h2 className="mb-6 text-2xl font-bold text-center">Đăng ký</h2>
         

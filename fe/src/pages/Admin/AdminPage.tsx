@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Profile } from '../../types/types';
 import { baseAxios } from '../../api/axios';
 import Swal from 'sweetalert2';
+import { Form } from 'react-router-dom';
+import FormFeature from './FormFeature';
+import FormBrand from './FormBrand';
 
 const AdminPage = () => {
   const [topCarOwners, setTopCarOwners] = useState<any[]>([]);
@@ -12,6 +15,7 @@ const AdminPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [renters, setRenters] = useState<any[]>([]);
   const [statistics, setStatistics] = useState<any>({});
+  const [isReload, setIsReload] = useState<boolean>(false);
 
   useEffect(() =>  {
 
@@ -20,7 +24,7 @@ const AdminPage = () => {
     fetchRentals();
     fetchCarOwner();
     fetchStatis();
-  }, [isLoading]);
+  }, [isLoading, isReload]);
 
   const fetchUserAccounts = async () => {
     try {
@@ -120,6 +124,11 @@ const AdminPage = () => {
         </div>
       </div>
 
+      <div className="grid grid-cols-2 gap-8 my-8">
+      <FormFeature onRegisterSuccess={() => setIsReload(!isReload)}/>
+      <FormBrand />
+      </div>
+
       {/* User Accounts Section */}
       <div className="bg-white p-6 shadow-lg rounded-lg mb-6">
         <h2 className="text-xl font-semibold mb-4">Quản lý tài khoản người dùng</h2>
@@ -151,6 +160,8 @@ const AdminPage = () => {
           </tbody>
         </table>
       </div>
+
+
     </div>
   );
 };

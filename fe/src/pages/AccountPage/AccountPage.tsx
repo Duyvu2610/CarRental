@@ -21,33 +21,49 @@ const AccountPage: React.FC = () => {
     { icon: "🧳", label: "Đổi mật khẩu" },
     { icon: "📄", label: "Lịch sử thuê xe" },
     { icon: "🎁", label: "Xóa tài khoản" , onclick : () => {
-      if (window.confirm("Bạn có chắc chắn muốn xóa tài khoản không?")) {
-        baseAxios.delete("/profile")
-          .then(() => {
-            Swal.fire({
-              title: "Thành công",
-              text: "Xóa tài khoản thành công",
-              icon: "success",
-              confirmButtonText: "Okay",
+      Swal.fire({
+        title: "Bạn có chắc chắn muốn xóa tài khoản không?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, keep it"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          baseAxios.delete("/profile")
+            .then(() => {
+              Swal.fire({
+                title: "Thành công",
+                text: "Xóa tài khoản thành công",
+                icon: "success",
+                confirmButtonText: "Okay",
+              });
+              localStorage.removeItem("token");
+              window.location.href = "/";
+            })
+            .catch((error) => {
+              Swal.fire({
+                title: "Error",
+                text: "Xoá tài khoản thất bại",
+                icon: "error",
+                confirmButtonText: "Okay",
+              });
             });
-            localStorage.removeItem("token");
-            window.location.href = "/";
-          })
-          .catch((error) => {
-            Swal.fire({
-              title: "Error",
-              text: "Xoá tài khoản thất bại",
-              icon: "error",
-              confirmButtonText: "Okay",
-            });
-          });
-      }
+        }
+      });
     }},
     { icon: "🚪", label: "Đăng xuất", specialClass: "text-red-600", onclick : () => {
-      if (window.confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
-        localStorage.removeItem("token");
-        window.location.href = "/";
-      }
+      Swal.fire({
+        title: "Bạn có chắc chắn muốn đăng xuất không?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Có",
+        cancelButtonText: "Không"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem("token");
+          window.location.href = "/";
+        }
+      });
     }},
   ];
 
